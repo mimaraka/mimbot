@@ -3,6 +3,10 @@ import discord
 import datetime
 import math
 #import cv2
+"""
+herokuでcv2をimportするとエラーが出たので
+とりあえずPillowで代用
+"""
 import os
 import re
 import numpy as np
@@ -10,7 +14,6 @@ from discord.ext import commands
 
 from PIL import Image, ImageFont, ImageDraw
 
-# 自分のBotのアクセストークンに置き換えてください
 token = os.getenv('DISCORD_BOT_TOKEN')
 
 intents = discord.Intents.all()
@@ -36,7 +39,7 @@ async def on_message(ctx):
         return
 
     if '昼' in str(ctx.content):
-        await ctx.channel.send('https://lh6.googleusercontent.com/nYhbTdRBCygnfU8TCmB9BOn_OlhuORSgI1cGn9PyGGcWCqB-FCiQQqUmtJkKYT6nivh8YYkdUvDXxrkZRKr9=w1920-h961-rw')
+        await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003470051363540992/ohiru.png')
         return
 
 #現在時刻を送信
@@ -52,17 +55,18 @@ async def now(ctx):
 #raika
 @bot.command(aliases=['aaruaika'])
 async def raika(ctx):
-    print("debug")
     await ctx.send("Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません")
 
 
 #fxname == 'distortion' の時に実行される関数
 def distort(img, tp, par1, par2, par3, par4):
-    if tp == 'wave':
-        height, width = img.shape[:2]
+    if tp in ['wv', 'wave']:
+        #height, width = img.shape[:2]
+        size = img.size
+        width, height = size
         h1 = 0
         h2 = 0
-        if par3 == 'horizontal' or par3 == 'hor':
+        if par3 in ['hor', 'horizontal']:
             h1 = width
             h2 = height
         else:
@@ -82,19 +86,24 @@ def distort(img, tp, par1, par2, par3, par4):
                 result = max - val
             return result
 
-        result = np.zeros_like(img)
+        size = img.size
 
-        if par3 == 'horizontal' or par3 == 'hor':
-            for y in range(img.shape[0]):
-                for x in range(img.shape[1]):
-                    for i in range(3):
-                        result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
+        #result = np.zeros_like(img)
+        result = Image.new('RGB',size)
+
+        #OpenCVはsizeではなくshape
+        if par3 in ['hor', 'horizontal']:
+            for y in range(img.size[1]):
+                for x in range(img.size[0]):
+                    #for i in range(3):
+                        #result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
+                    result.putpixel((x, y), tuple(img.getpixel((roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.size[0] - 1), y))))
         else:
-            for y in range(img.shape[0]):
-                for x in range(img.shape[1]):
-                    for i in range(3):
-                        result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
-
+            for y in range(img.size[1]):
+                for x in range(img.size[0]):
+                    #for i in range(3):
+                        #result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
+                    result.putpixel((x, y), tuple(img.getpixel((x, roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.size[1] - 1)))))
         return result
     return
 
@@ -113,12 +122,12 @@ async def effect(ctx, *params):
         await ctx.send('返信元のメッセージにファイルが添付されていません')
         return
 
-    await mes.attachments[0].save('img_input.png')
+    await mes.attachments[0].save('temp_input.png')
 
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
-    img = Image.open('img_input.png')
-    if fxname == 'distortion' or fxname == 'distort':
+    img = Image.open('temp_input.png')
+    if fxname in ['dst', 'distort', 'distortion']:
         img_result = distort(img, par1, par2, par3, par4, par5)
     
     #処理中メッセージを削除
