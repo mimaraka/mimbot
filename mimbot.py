@@ -46,7 +46,7 @@ async def on_message(ctx):
 @bot.command()
 async def now(ctx):
     date_now = datetime.datetime.now()
-    date_now.hours += 9
+    date_now.hour += 9
     date_kyotsu = datetime.datetime(2023, 1, 14)
     delta = date_kyotsu - date_now
     days_kyotsu = delta.days + 1
