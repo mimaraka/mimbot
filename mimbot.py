@@ -11,7 +11,7 @@ from discord.ext import commands
 from PIL import Image, ImageFont, ImageDraw
 
 # 自分のBotのアクセストークンに置き換えてください
-TOKEN = 'NzMwMzczNDE3NjUxNTM1OTMy.G3HJNu.QxAUZuvu56eeN7YZepHF2zCT198ouXn5wadwDE'
+token = os.getenv('DISCORD_BOT')
 
 intents = discord.Intents.all()
 
@@ -130,4 +130,4 @@ async def effect(ctx, *params):
 
 
 # Botの起動とDiscordサーバーへの接続
-bot.run(TOKEN)
+bot.run(token)
