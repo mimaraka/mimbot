@@ -1,33 +1,33 @@
-# インストールした discord.py を読み込む
 import discord
 import datetime
 import math
 #import cv2
-"""
-herokuでcv2をimportするとエラーが出たので
-とりあえずPillowで代用
-"""
+#herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
 import os
-import re
-import numpy as np
+#import numpy as np
 from discord.ext import commands
-
-from PIL import Image, ImageFont, ImageDraw
-
-token = os.getenv('DISCORD_BOT_TOKEN')
+from PIL import Image
+import traceback
 
 intents = discord.Intents.all()
 
-# Botの接頭辞を^にする
+#Botの接頭辞を^にする
 bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
 
-# 起動時に動作する処理
+#起動時に動作する処理
 @bot.event
 async def on_ready():
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
 
-# メッセージ受信時に動作する処理
+#エラー発生時に動作する処理
+@bot.event
+async def on_command_error(ctx, error):
+    orig_error = getattr(error, "original", error)
+    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    await ctx.send(error_msg)
+
+#メッセージ受信時に動作する処理
 @bot.event
 async def on_message(ctx):
     await bot.process_commands(ctx)
@@ -46,6 +46,7 @@ async def on_message(ctx):
 @bot.command()
 async def now(ctx):
     date_now = datetime.datetime.now()
+    date_now.hours += 9
     date_kyotsu = datetime.datetime(2023, 1, 14)
     delta = date_kyotsu - date_now
     days_kyotsu = delta.days + 1
@@ -59,21 +60,21 @@ async def raika(ctx):
 
 
 #fxname == 'distortion' の時に実行される関数
-def distort(img, tp, par1, par2, par3, par4):
-    if tp in ['wv', 'wave']:
+def distort(img, values):
+    if values[0] in ['wv', 'wave']:
         #height, width = img.shape[:2]
         size = img.size
         width, height = size
         h1 = 0
         h2 = 0
-        if par3 in ['hor', 'horizontal']:
+        if len(values) > 3 and values[3] in ['hor', 'horizontal']:
             h1 = width
             h2 = height
         else:
             h1 = height
             h2 = width
-        amp = float(par1) / 100 * h1
-        freq = float(par2)
+        amp = float(values[1]) / 100 * h1
+        freq = float(values[2])
 
         def roop(num, min, max):
             range = max - min
@@ -92,7 +93,7 @@ def distort(img, tp, par1, par2, par3, par4):
         result = Image.new('RGB',size)
 
         #OpenCVはsizeではなくshape
-        if par3 in ['hor', 'horizontal']:
+        if len(values) > 3 and values[3] in ['hor', 'horizontal']:
             for y in range(img.size[1]):
                 for x in range(img.size[0]):
                     #for i in range(3):
@@ -111,15 +112,17 @@ def distort(img, tp, par1, par2, par3, par4):
 #画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *params):
-    fxname, par1, par2, par3, par4, par5 = params
+    fxname = params[0]
+    values = params[1:]
+    
     if ctx.message.reference is None:
-        await ctx.send('加工したい画像に返信してください')
+        await ctx.reply('加工したい画像に返信してください', mention_author=False)
         return
 
     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 
     if mes.attachments[0] is None:
-        await ctx.send('返信元のメッセージにファイルが添付されていません')
+        await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
     await mes.attachments[0].save('temp_input.png')
@@ -128,7 +131,7 @@ async def effect(ctx, *params):
 
     img = Image.open('temp_input.png')
     if fxname in ['dst', 'distort', 'distortion']:
-        img_result = distort(img, par1, par2, par3, par4, par5)
+        img_result = distort(img, values)
     
     #処理中メッセージを削除
     await mes_pros.delete()
@@ -141,4 +144,5 @@ async def effect(ctx, *params):
 
 
 # Botの起動とDiscordサーバーへの接続
+token = os.getenv('DISCORD_BOT_TOKEN')
 bot.run(token)
