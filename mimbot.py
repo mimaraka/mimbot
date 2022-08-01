@@ -2,7 +2,7 @@
 import discord
 import datetime
 import math
-import cv2
+#import cv2
 import os
 import re
 import numpy as np
@@ -11,7 +11,8 @@ from discord.ext import commands
 from PIL import Image, ImageFont, ImageDraw
 
 # 自分のBotのアクセストークンに置き換えてください
-token = os.getenv('DISCORD_BOT_TOKEN')
+#token = os.getenv('DISCORD_BOT_TOKEN')
+token = "NzMwMzczNDE3NjUxNTM1OTMy.Gg41gv.AKk_1cGXgigL0iPi_YPFiHMqL7mKFtS4Q-Po7E"
 
 intents = discord.Intents.all()
 
@@ -117,15 +118,17 @@ async def effect(ctx, *params):
 
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
-    img = cv2.imread('img_input.png')
+    img = Image.open('img_input.png')
     if fxname == 'distortion' or fxname == 'distort':
         img_result = distort(img, par1, par2, par3, par4, par5)
     
     #処理中メッセージを削除
     await mes_pros.delete()
     if not img_result is None:
-        cv2.imwrite('temp_output.png',img_result)
+        #cv2.imwrite('temp_output.png',img_result)
+        img_result.save('temp_output.png')
         await ctx.send(file=discord.File('temp_output.png'))
+        os.remove('temp_input.png')
         os.remove('temp_output.png')
 
 
