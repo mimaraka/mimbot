@@ -48,7 +48,7 @@ async def ping(ctx):
     raw_ping = bot.latency
     # ミリ秒に変換して丸める
     ping = round(raw_ping * 1000)
-    await ctx.reply(f"Pong!(Latency : {ping}ms)")
+    await ctx.reply(f"Pong!(Latency : {ping}ms)", mention_author=False)
 
 #raika
 @bot.command(aliases=['aaruaika'])
