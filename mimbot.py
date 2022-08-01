@@ -1,158 +1,133 @@
 # インストールした discord.py を読み込む
-import discord, random, os, csv
+import discord
+import datetime
+import math
+import cv2
+import os
+import re
+import numpy as np
+from discord.ext import commands
+
 from PIL import Image, ImageFont, ImageDraw
 
 # 自分のBotのアクセストークンに置き換えてください
-TOKEN = 'NzMwMzczNDE3NjUxNTM1OTMy.GnEN_Z.izW6dcJV39lRsqfY67-LgSxZ9ozXdoTBim-E38'
+TOKEN = 'NzMwMzczNDE3NjUxNTM1OTMy.G3HJNu.QxAUZuvu56eeN7YZepHF2zCT198ouXn5wadwDE'
 
-# 接続に必要なオブジェクトを生成
-client = discord.Client()
+intents = discord.Intents.all()
 
-async def UmaGacha10(message):
-    umamusume = [
-        ["[スペシャルドリーマー]スペシャルウィーク", 3],
-        ["[サイレントイノセンス]サイレンススズカ", 3],
-        ["[トップ・オブ・ジョイフル]トウカイテイオー", 3],
-        ["[フォーミュラオブルージュ]マルゼンスキー", 3],
-        ["[スターライトビート]オグリキャップ", 3],
-        ["[ワイルド・フロンティア]タイキシャトル", 3],
-        ["[エレガンス・ライン]メジロマックイーン", 3],
-        ["[ロード・オブ・エンペラー]シンボリルドルフ", 3],
-        ["[ローゼスドリーム]ライスシャワー", 3],
-        ["[レッドストライフ]ゴールドシップ", 2],
-        ["[ワイルドトップギア]ウオッカ", 2],
-        ["[トップ・オブ・ブルー]ダイワスカーレット", 2],
-        ["[石穿つ者]グラスワンダー", 2],
-        ["[エル☆Número１]エルコンドルパサー", 2],
-        ["[エンプレスロード]エアグルーヴ", 2],
-        ["[すくらんぶる☆ゾーン]マヤノトップガン", 2],
-        ["[マーマリングストリーム]スーパークリーク", 2],
-        ["[ストレート・ライン]メジロライアン", 1],
-        ["[tach-nology]アグネスタキオン", 1],
-        ["[Go To Winning]ウイニングチケット", 1],
-        ["[サクラ、すすめ！]サクラバクシンオー", 1],
-        ["[うららん一等賞♪]ハルウララ", 1],
-        ["[運気上昇☆幸福万来]マチカネフクキタル", 1],
-        ["[ポインセチア・リボン]ナイスネイチャ", 1],
-        ["[キング・オブ・エメラルド]キングヘイロー", 1],
-        ["[オー・ソレ・スーオ！]テイエムオペラオー", 3],
-        ["[MB-19890425]ミホノブルボン", 3],
-        ["[pf.Victory formula...]ビワハヤヒデ", 3],
-        ["[ビヨンド・ザ・ホライズン]トウカイテイオー", 3],
-        ["[エンド・オブ・スカイ]メジロマックイーン", 3],
-        ["[フィーユ・エクレール]カレンチャン", 3],
-        ["[Nevertheless]ナリタタイシン", 3],
-        ["[あぶそりゅーと☆LOVE]スマートファルコン", 3],
-        ["[Maverick]ナリタブライアン", 3],
-        ["[サンライト・ブーケ]マヤノトップガン", 3],
-        ["[クエルクス・キウィーリス]エアグルーヴ", 3],
-        ["[あおぐもサミング]セイウンスカイ", 3],
-        ["[アマゾネス・ラピス]ヒシアマゾン", 3],
-        ["[ククルカン・モンク]エルコンドルパサー", 3],
-        ["[セイントジェード・ヒーラー]グラスワンダー", 3],
-        ["[シューティングスタァ・ルヴュ]フジキセキ", 3],
-        ["[オーセンティック/1928]ゴールドシチー", 3],
-        ["[ほっぴん♪ビタミンハート]スペシャルウィーク", 3],
-        ["[ぶっとび☆さまーナイト]マルゼンスキー", 3],
-        ["[ブルー/レイジング]メイショウドトウ", 3],
-        ["[Meisterscaft]エイシンフラッシュ", 3],
-        ["[吉兆・初あらし]マチカネフクキタル", 3],
-        ["[ボーノ☆アラモーダ]ヒシアケボノ", 3],
-        ["[超特急！フルカラー特殊PP]アグネスデジタル", 3],
-        ["[Make up Vampire!]ライスシャワー", 3],
-        ["[シフォンリボンマミー]スーパークリーク", 3],
-        ["[プリンセス・オブ・ピンク]カワカミプリンセス", 3],
-        ["[Creeping Black]マンハッタンカフェ", 3],
-        ["[皓月の弓取り]シンボリルドルフ", 3],
-        ["[秋桜ダンツァトリーチェ]ゴールドシチー", 3],
-        ["[ポップス☆ジョーカー]トーセンジョーダン", 3],
-        ["[ツイステッド・ライン]メジロドーベル", 3],
-        ["[キセキの白星]オグリキャップ", 3],
-        ["[ノエルージュ・キャロル]ビワハヤヒデ", 3],
-        ["[Noble Seamair]ファインモーション", 3],
-        ["[疾風迅雷]タマモクロス", 3],
-        ["[初うらら♪さくさくら]ハルウララ", 3],
-        ["[初晴・青き絢爛]テイエムオペラオー", 3],
-        ["[日下開山・花あかり]サクラチヨノオー", 3],
-        ["[CODE：グラサージュ]ミホノブルボン", 3],
-        ["[コレクト・ショコラティエ]エイシンフラッシュ", 3],
-        ["[クリノクロア・ライン]メジロアルダン", 3],
-        ["[Starry Nocturne]アドマイヤベガ", 3],
-        ["[錦上・大判御輿]キタサンブラック", 3],
-        ["[ぱんぱかティルトット]マチカネタンホイザ", 2],
-        ["[Natural Brilliance]サトノダイヤモンド", 3],
-        ["[ブリュニサージュ・ライン]メジロブライト", 3],
-        ["[ソワレ・ド・シャトン]セイウンスカイ", 3],
-        ["[シュクセ・エトワーレ]フジキセキ", 3],
-        ["[ティアード・ペタル]ニシノフラワー", 3],
-        ["[四白流星の襲]ヤエノムテキ", 3],
-        ["[RUN&WIN]ナイスネイチャ", 3],
-        ["[白く気高き激励の装]キングヘイロー", 3],
-        ["[オールタイム・フィーバー]アイネスフウジン", 3],
-        ["[Like Breakthrough]メジロパーマー", 3],
-        ["[朔月のマ・シェリ]カレンチャン", 13],
-        ["[Titania]ファインモーション", 13]
-    ]
-    weights = [79, 18, 1.5, 1.5]
-    weights_10 = [0, 97, 1.5, 1.5]
-
-    width = 400
-    height = 222
-    bg = (54, 57, 63)
-    img = Image.new("RGB", (width, height), bg)
-    draw = ImageDraw.Draw(img)
-    font = ImageFont.truetype(".fonts/meiryo.ttf", 16)
-    kankaku = 46
-
-    for i in range(10):
-        if (i < 9):
-            w = weights
-        else:
-            w = weights_10
-        l_rare = [
-            random.choice([i for i in umamusume if i[1] == 1]),
-            random.choice([i for i in umamusume if i[1] == 2]),
-            random.choice([i for i in umamusume if i[1] == 3]),
-            random.choice([i for i in umamusume if i[1] > 10])
-        ]
-        result = random.choices(l_rare, weights=w)[0]
-        if (result[1] % 10 == 3):
-            color = (214,204,107)
-        else:
-            color = (255, 255, 255)
-        if (i == 5):
-            draw.rectangle((0, 0, width, height), fill=bg)
-        #umaim = Image.open(f"C:\\Users\\njotn\\OneDrive\\画像\\umaicon\\resize\\i_{umamusume.index(result)+1}.png")
-        #img.paste(umaim, (0, kankaku * (i % 5)))
-        draw.text((40,-4 + kankaku * (i % 5)), "★" * (result[1] % 10) + "　" * (3 - result[1] % 10),color,font=font)
-        draw.text((40,12 + kankaku * (i % 5)), result[0] ,color,font=font)
-        if (i == 4 or i == 9):
-            img.save("temp.png")
-            await message.channel.send(file=discord.File("temp.png"))
-    os.remove("temp.png")
-    await message.channel.send(f"author：{message.author}")
-
-    with open('data.csv', 'w', newline='') as csv_file:
-        writer = csv.writer(csv_file)
-        writer.writerow([message.author, 2])
-
-
+# Botの接頭辞を^にする
+bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
 
 # 起動時に動作する処理
-@client.event
+@bot.event
 async def on_ready():
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
 
 # メッセージ受信時に動作する処理
-@client.event
-async def on_message(message):
+@bot.event
+async def on_message(ctx):
+    await bot.process_commands(ctx)
     # メッセージ送信者がBotだった場合は無視する
-    if message.author.bot:
+    if ctx.author.bot:
         return
-    # 「!uma」と発言したら10連
-    if message.content == '!uma':
-        await UmaGacha10(message)
+    if 'おくり' in str(ctx.content):
+        await ctx.channel.send('おくりさんどれだけ性欲あるの')
+        return
+
+    if '昼' in str(ctx.content):
+        await ctx.channel.send('https://lh6.googleusercontent.com/nYhbTdRBCygnfU8TCmB9BOn_OlhuORSgI1cGn9PyGGcWCqB-FCiQQqUmtJkKYT6nivh8YYkdUvDXxrkZRKr9=w1920-h961-rw')
+        return
+
+#現在時刻を送信
+@bot.command()
+async def now(ctx):
+    date_now = datetime.datetime.now()
+    date_kyotsu = datetime.datetime(2023, 1, 14)
+    delta = date_kyotsu - date_now
+    days_kyotsu = delta.days + 1
+    await ctx.send(f'現在時刻：{date_now.strftime("%Y/%m/%d %H:%M:%S")}\n次の共通テストまであと{days_kyotsu}日です。')
+
+
+#raika
+@bot.command(aliases=['aaruaika'])
+async def raika(ctx):
+    print("debug")
+    await ctx.send("Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません")
+
+
+#fxname == 'distortion' の時に実行される関数
+def distort(img, tp, par1, par2, par3, par4):
+    if tp == 'wave':
+        height, width = img.shape[:2]
+        h1 = 0
+        h2 = 0
+        if par3 == 'horizontal' or par3 == 'hor':
+            h1 = width
+            h2 = height
+        else:
+            h1 = height
+            h2 = width
+        amp = float(par1) / 100 * h1
+        freq = float(par2)
+
+        def roop(num, min, max):
+            range = max - min
+            n = (num - min) // range
+            val = (num - min) % range
+            result = 0
+            if n % 2 == 0:
+                result = min + val
+            else:
+                result = max - val
+            return result
+
+        result = np.zeros_like(img)
+
+        if par3 == 'horizontal' or par3 == 'hor':
+            for y in range(img.shape[0]):
+                for x in range(img.shape[1]):
+                    for i in range(3):
+                        result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
+        else:
+            for y in range(img.shape[0]):
+                for x in range(img.shape[1]):
+                    for i in range(3):
+                        result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
+
+        return result
+    return
+
+
+#画像に各種エフェクトをかける
+@bot.command(aliases=['fx', 'effects'])
+async def effect(ctx, *params):
+    fxname, par1, par2, par3, par4, par5 = params
+    if ctx.message.reference is None:
+        await ctx.send('加工したい画像に返信してください')
+        return
+
+    mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+    if mes.attachments[0] is None:
+        await ctx.send('返信元のメッセージにファイルが添付されていません')
+        return
+
+    await mes.attachments[0].save('img_input.png')
+
+    mes_pros = await ctx.reply('処理中です…', mention_author=False)
+
+    img = cv2.imread('img_input.png')
+    if fxname == 'distortion' or fxname == 'distort':
+        img_result = distort(img, par1, par2, par3, par4, par5)
+    
+    #処理中メッセージを削除
+    await mes_pros.delete()
+    if not img_result is None:
+        cv2.imwrite('temp_output.png',img_result)
+        await ctx.send(file=discord.File('temp_output.png'))
+        os.remove('temp_output.png')
+
 
 # Botの起動とDiscordサーバーへの接続
-client.run(TOKEN)
+bot.run(TOKEN)
