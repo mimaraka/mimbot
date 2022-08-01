@@ -1,5 +1,4 @@
 import discord
-import datetime
 import math
 #import cv2
 #herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
@@ -41,17 +40,15 @@ async def on_message(ctx):
     if '昼' in str(ctx.content):
         await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003470051363540992/ohiru.png')
         return
-
-#現在時刻を送信
+    
+#ping
 @bot.command()
-async def now(ctx):
-    date_now = datetime.datetime.now()
-    date_now.hour += 9
-    date_kyotsu = datetime.datetime(2023, 1, 14)
-    delta = date_kyotsu - date_now
-    days_kyotsu = delta.days + 1
-    await ctx.send(f'現在時刻：{date_now.strftime("%Y/%m/%d %H:%M:%S")}\n次の共通テストまであと{days_kyotsu}日です。')
-
+async def ping(ctx):
+    # Ping値を秒単位で取得
+    raw_ping = bot.latency
+    # ミリ秒に変換して丸める
+    ping = round(raw_ping * 1000)
+    await ctx.reply(f"Pong!(Latency : {ping}ms)")
 
 #raika
 @bot.command(aliases=['aaruaika'])
