@@ -1,1 +1,1 @@
-web: python mimbot.py 
+mimbot: python mimbot.py 
