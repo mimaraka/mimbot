@@ -11,7 +11,7 @@ from discord.ext import commands
 from PIL import Image, ImageFont, ImageDraw
 
 # 自分のBotのアクセストークンに置き換えてください
-token = os.getenv('DISCORD_BOT')
+token = os.getenv('DISCORD_BOT_TOKEN')
 
 intents = discord.Intents.all()
 
