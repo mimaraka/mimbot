@@ -60,8 +60,7 @@ async def raika(ctx):
 def distort(img, values):
     if values[0] in ['wv', 'wave']:
         #height, width = img.shape[:2]
-        size = img.size
-        width, height = size
+        width, height = img.size
         h1 = 0
         h2 = 0
         if len(values) > 3 and values[3] in ['hor', 'horizontal']:
@@ -84,10 +83,8 @@ def distort(img, values):
                 result = max - val
             return result
 
-        size = img.size
-
         #result = np.zeros_like(img)
-        result = Image.new('RGB',size)
+        result = Image.new('RGB',img.size)
 
         #OpenCVはsizeではなくshape
         if len(values) > 3 and values[3] in ['hor', 'horizontal']:
@@ -106,11 +103,22 @@ def distort(img, values):
     return
 
 
+def negative(img):
+    result = Image.new('RGB',img.size)
+    for y in range(img.size[1]):
+        for x in range(img.size[0]):
+            r = 255 - img.getpixel((x, y))[0]
+            g = 255 - img.getpixel((x, y))[1]
+            b = 255 - img.getpixel((x, y))[2]
+            result.putpixel((x, y), (r, g, b))
+
+
 #画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *params):
     fxname = params[0]
-    values = params[1:]
+    if len(params) > 1:
+        values = params[1:]
     
     if ctx.message.reference is None:
         await ctx.reply('加工したい画像に返信してください', mention_author=False)
@@ -127,8 +135,11 @@ async def effect(ctx, *params):
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
     img = Image.open('temp_input.png')
+
     if fxname in ['dst', 'distort', 'distortion']:
         img_result = distort(img, values)
+    elif fxname in ['negative', 'nega']:
+        img_result = negative(img)
     
     #処理中メッセージを削除
     await mes_pros.delete()
