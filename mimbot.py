@@ -111,6 +111,7 @@ def negative(img):
             g = 255 - img.getpixel((x, y))[1]
             b = 255 - img.getpixel((x, y))[2]
             result.putpixel((x, y), (r, g, b))
+    return result
 
 
 #画像に各種エフェクトをかける
