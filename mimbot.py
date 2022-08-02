@@ -117,7 +117,10 @@ def negative(img):
 #画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *params):
-    fxname = params[0]
+    if params:
+        fxname = params[0]
+    else:
+        ctx.send('・distortion / distort / dst：\n画像を様々な形に変形します。\n・negative / nega：\n画像のネガポジを反転します。')
     if len(params) > 1:
         values = params[1:]
     
