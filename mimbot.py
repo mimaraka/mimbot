@@ -120,7 +120,7 @@ async def effect(ctx, *params):
     if params:
         fxname = params[0]
     else:
-        await ctx.send('・distortion / distort / dst：\n画像を様々な形に変形します。\n・negative / nega：\n画像のネガポジを反転します。')
+        await ctx.send('・distortion / distort / dist：\n画像を様々な形に変形します。\n・negative / nega：\n画像のネガポジを反転します。')
         return
     if len(params) > 1:
         values = params[1:]
