@@ -58,7 +58,7 @@ async def raika(ctx):
 
 #fxname == 'distortion' の時に実行される関数
 def distort(img, values):
-    if values[0] in ['wv', 'wave']:
+    if values[0] in ['wav', 'wave']:
         #height, width = img.shape[:2]
         width, height = img.size
         h1 = 0
@@ -141,7 +141,7 @@ async def effect(ctx, *params):
 
     img = Image.open('temp_input.png')
 
-    if fxname in ['dst', 'distort', 'distortion']:
+    if fxname in ['dist', 'distort', 'distortion']:
         img_result = distort(img, values)
     elif fxname in ['negative', 'nega']:
         img_result = negative(img)
