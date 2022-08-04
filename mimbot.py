@@ -1,5 +1,6 @@
 import discord
 import math
+import random
 #import cv2
 #herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
 import os
@@ -53,7 +54,17 @@ async def ping(ctx):
 #raika
 @bot.command(aliases=['aaruaika'])
 async def raika(ctx):
-    await ctx.send("Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません")
+    raika_tweets = [
+        "Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません",
+        "はぁ、どちら様ですか？",
+        "帽子どかしたら脳があってしかもそれが糊https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large",
+        "https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small",
+        "アニメアイコン洗った？",
+        "今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ",
+        '私は " ゴキブリ " に家賃を払わせることで年収 " 1500万円 " を稼ぎました。\n詳細はこちらから→'
+    ]
+    raika_tweet_pickup = random.choice(raika_tweets)
+    await ctx.send(raika_tweet_pickup)
 
 
 #fxname == 'distortion' の時に実行される関数
