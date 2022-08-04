@@ -57,7 +57,7 @@ async def raika(ctx):
     raika_tweets = [
         "Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません",
         "はぁ、どちら様ですか？",
-        "帽子どかしたら脳があってしかもそれが糊https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large",
+        ["帽子どかしたら脳があってしかもそれが糊", "https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large"],
         "https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small",
         "アニメアイコン洗った？",
         "今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ",
