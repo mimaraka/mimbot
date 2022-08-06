@@ -74,7 +74,9 @@ async def raika(ctx):
         ['湿原で失言'],
         ['https://pbs.twimg.com/media/FSWhxg6VEAEBJXh?format=jpg&name=small'],
         ['シコルドあるあるアラッー！のところで白パーティクル射精'],
-        ['※本ビデオ本編4章後半にイキスギあり']
+        ['※本ビデオ本編4章後半にイキスギあり'],
+        ['家賃と電気代割ってみた！'],
+        ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
     ]
     raika_tweet_pickup = random.choice(raika_tweets)
     for tw in raika_tweet_pickup:
