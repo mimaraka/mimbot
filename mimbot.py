@@ -38,7 +38,11 @@ async def on_message(ctx):
         await ctx.channel.send('おくりさんどれだけ性欲あるの')
         return
 
-    if '昼' in str(ctx.content):
+    if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
+        await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
+        return
+
+    if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
         await ctx.channel.send('https://p-town-admin.dmm.com/img/upload/editor/_01_%E3%83%91%E3%83%81%E3%82%B9%E3%83%AD%E6%A9%9F%E7%A8%AE%E3%83%9A%E3%83%BC%E3%82%B8/S700_%E3%83%91%E3%83%81%E3%82%B9%E3%83%AD1000%E3%81%A1%E3%82%83%E3%82%93/1221/F0002.jpg')
         return
     
