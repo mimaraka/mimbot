@@ -124,14 +124,13 @@ def negative(img):
 
 #クワガタ
 @bot.command()
-async def kuwagata(ctx, arg):
+async def kuwagata(ctx, *arg):
     async def send_kuwagata(text):
-        await ctx.send(f"フラッシュさん見て見て\n{text}～")
+        await ctx.send(f"{ctx.author.name}さん見て見て\n{text}～")
 
     if not arg:
         await send_kuwagata('クワガタ')
         return
-    await ctx.send(type(arg))
     if type(arg) == list:
         for el in arg:
             await send_kuwagata(el)
