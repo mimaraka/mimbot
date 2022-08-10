@@ -58,73 +58,69 @@ async def on_message(ctx):
 
 
 ##########################################################################
-####    Functions
-##########################################################################
-
-#fxname == 'distortion' の時に実行される関数
-def distort(img, values):
-    if values[0] in ['wav', 'wave']:
-        #height, width = img.shape[:2]
-        width, height = img.size
-        h1 = 0
-        h2 = 0
-        if len(values) > 3 and values[3] in ['hor', 'horizontal']:
-            h1 = width
-            h2 = height
-        else:
-            h1 = height
-            h2 = width
-        amp = float(values[1]) / 100 * h1
-        freq = float(values[2])
-
-        def roop(num, min, max):
-            range = max - min
-            n = (num - min) // range
-            val = (num - min) % range
-            result = 0
-            if n % 2 == 0:
-                result = min + val
-            else:
-                result = max - val
-            return result
-
-        #result = np.zeros_like(img)
-        result = Image.new('RGB',img.size)
-
-        #OpenCVはsizeではなくshape
-        if len(values) > 3 and values[3] in ['hor', 'horizontal']:
-            for y in range(img.size[1]):
-                for x in range(img.size[0]):
-                    #for i in range(3):
-                        #result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
-                    result.putpixel((x, y), tuple(img.getpixel((roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.size[0] - 1), y))))
-        else:
-            for y in range(img.size[1]):
-                for x in range(img.size[0]):
-                    #for i in range(3):
-                        #result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
-                    result.putpixel((x, y), tuple(img.getpixel((x, roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.size[1] - 1)))))
-        return result
-    return
-
-
-def negative(img):
-    result = Image.new('RGB',img.size)
-    for y in range(img.size[1]):
-        for x in range(img.size[0]):
-            r = 255 - img.getpixel((x, y))[0]
-            g = 255 - img.getpixel((x, y))[1]
-            b = 255 - img.getpixel((x, y))[2]
-            result.putpixel((x, y), (r, g, b))
-    return result
-
-##########################################################################
 ####    Bot Command
 ##########################################################################
 
 #画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *params):
+    #fxname == 'distortion' の時に実行される関数
+    def distort(img, values):
+        if values[0] in ['wav', 'wave']:
+            #height, width = img.shape[:2]
+            width, height = img.size
+            h1 = 0
+            h2 = 0
+            if len(values) > 3 and values[3] in ['hor', 'horizontal']:
+                h1 = width
+                h2 = height
+            else:
+                h1 = height
+                h2 = width
+            amp = float(values[1]) / 100 * h1
+            freq = float(values[2])
+
+            def roop(num, min, max):
+                range = max - min
+                n = (num - min) // range
+                val = (num - min) % range
+                result = 0
+                if n % 2 == 0:
+                    result = min + val
+                else:
+                    result = max - val
+                return result
+
+            #result = np.zeros_like(img)
+            result = Image.new('RGB',img.size)
+
+            #OpenCVはsizeではなくshape
+            if len(values) > 3 and values[3] in ['hor', 'horizontal']:
+                for y in range(img.size[1]):
+                    for x in range(img.size[0]):
+                        #for i in range(3):
+                            #result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
+                        result.putpixel((x, y), tuple(img.getpixel((roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.size[0] - 1), y))))
+            else:
+                for y in range(img.size[1]):
+                    for x in range(img.size[0]):
+                        #for i in range(3):
+                            #result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
+                        result.putpixel((x, y), tuple(img.getpixel((x, roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.size[1] - 1)))))
+            return result
+        return
+
+    #fxname == 'negative' の時に実行される関数
+    def negative(img):
+        result = Image.new('RGB',img.size)
+        for y in range(img.size[1]):
+            for x in range(img.size[0]):
+                r = 255 - img.getpixel((x, y))[0]
+                g = 255 - img.getpixel((x, y))[1]
+                b = 255 - img.getpixel((x, y))[2]
+                result.putpixel((x, y), (r, g, b))
+        return result
+    
     if params:
         fxname = params[0]
     else:
