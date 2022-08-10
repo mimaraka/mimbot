@@ -118,7 +118,6 @@ def negative(img):
             result.putpixel((x, y), (r, g, b))
     return result
 
-
 ##########################################################################
 ####    Bot Command
 ##########################################################################
@@ -126,10 +125,17 @@ def negative(img):
 #クワガタ
 @bot.command()
 async def kuwagata(ctx, arg):
-    if (len(arg) < 1):
+    async def send_kuwagata(text):
+        await ctx.send(f"フラッシュさん見て見て\n{text}～")
+
+    if not arg:
+        await send_kuwagata('クワガタ')
         return
-    text = arg[0]
-    await ctx.send(f"フラッシュさん見て見て\n{text}～")
+    if type(arg) == list:
+        for el in arg:
+            await send_kuwagata(el)
+    else:
+        await send_kuwagata(arg)
 
 #ping
 @bot.command()
