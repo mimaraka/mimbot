@@ -25,12 +25,14 @@ async def on_ready():
     # 起動したらターミナルにログイン通知が表示される
     print('ログインしました')
 
+
 #エラー発生時に動作する処理
 @bot.event
 async def on_command_error(ctx, error):
     orig_error = getattr(error, "original", error)
     error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
     await ctx.send(error_msg)
+
 
 #メッセージ受信時に動作する処理
 @bot.event
@@ -55,6 +57,7 @@ async def on_message(ctx):
     if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
         await ctx.channel.send('https://p-town-admin.dmm.com/img/upload/editor/_01_%E3%83%91%E3%83%81%E3%82%B9%E3%83%AD%E6%A9%9F%E7%A8%AE%E3%83%9A%E3%83%BC%E3%82%B8/S700_%E3%83%91%E3%83%81%E3%82%B9%E3%83%AD1000%E3%81%A1%E3%82%83%E3%82%93/1221/F0002.jpg')
         return
+
 
 
 ##########################################################################
@@ -159,6 +162,7 @@ async def effect(ctx, *params):
         os.remove('temp_input.png')
         os.remove('temp_output.png')
 
+
 #クワガタ
 @bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *arg):
@@ -171,14 +175,16 @@ async def kuwagata(ctx, *arg):
     for el in arg:
         await send_kuwagata(el)
 
+
 #ping
 @bot.command()
 async def ping(ctx):
     # Ping値を秒単位で取得
     raw_ping = bot.latency
     # ミリ秒に変換して丸める
-    ping = round(raw_ping * 1000)
+    ping = round(raw_ping * 1000, 2)
     await ctx.reply(f"Pong! (Latency : {ping}ms)", mention_author=False)
+
 
 #raika
 @bot.command(aliases=['aaruaika'])
@@ -210,6 +216,7 @@ async def raika(ctx):
     raika_tweet_pickup = random.choice(raika_tweets)
     for tw in raika_tweet_pickup:
         await ctx.send(tw)
+
 
 
 ##########################################################################
