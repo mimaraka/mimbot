@@ -164,7 +164,7 @@ async def effect(ctx, *params):
         os.remove('temp_output.png')
 
 #クワガタ
-@bot.command()(aliases=['kwgt'])
+@bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *arg):
     async def send_kuwagata(text):
         await ctx.send(f"{ctx.author.name}さん見て見て\n{text}～")
