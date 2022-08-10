@@ -34,6 +34,11 @@ async def on_message(ctx):
     # メッセージ送信者がBotだった場合は無視する
     if ctx.author.bot:
         return
+
+    if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
+        await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
+        return
+
     if 'おくり' in str(ctx.content):
         await ctx.channel.send('おくりさんどれだけ性欲あるの')
         return
