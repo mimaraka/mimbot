@@ -131,6 +131,7 @@ async def kuwagata(ctx, arg):
     if not arg:
         await send_kuwagata('クワガタ')
         return
+    await ctx.send(type(arg))
     if type(arg) == list:
         for el in arg:
             await send_kuwagata(el)
