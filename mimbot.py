@@ -122,61 +122,6 @@ def negative(img):
 ####    Bot Command
 ##########################################################################
 
-#クワガタ
-@bot.command()
-async def kuwagata(ctx, *arg):
-    async def send_kuwagata(text):
-        await ctx.send(f"{ctx.author.name}さん見て見て\n{text}～")
-
-    if not arg:
-        await send_kuwagata('クワガタ')
-        return
-    if type(arg) == list:
-        for el in arg:
-            await send_kuwagata(el)
-    else:
-        await send_kuwagata(arg)
-
-#ping
-@bot.command()
-async def ping(ctx):
-    # Ping値を秒単位で取得
-    raw_ping = bot.latency
-    # ミリ秒に変換して丸める
-    ping = round(raw_ping * 1000)
-    await ctx.reply(f"Pong! (Latency : {ping}ms)", mention_author=False)
-
-#raika
-@bot.command(aliases=['aaruaika'])
-async def raika(ctx):
-    raika_tweets = [
-        ["Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません"],
-        ["はぁ、どちら様ですか？"],
-        ["帽子どかしたら脳があってしかもそれが糊", "https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large"],
-        ["https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small"],
-        ["アニメアイコン洗った？"],
-        ["今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ"],
-        ['私は " ゴキブリ " に家賃を払わせることで年収 " 1500万円 " を稼ぎました。\n詳細はこちらから→'],
-        ['セイキン夫婦がガチでハマってるお菓子ランキング2022'],
-        ['初めてなんだけど…下手だったらごめんねｼﾞｭｯﾎﾞｼﾞｭﾎﾞｼﾞｭﾙﾙﾙｽﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾎﾞﾁﾞｭｳｳｳｯﾊﾟｼﾞｭﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾙﾙﾙﾙﾙﾙﾙｼﾞｭｯﾊﾟｧ!ごっくん…'],
-        ['それでは恒例イモトを探せ'],
-        ['から揚げ専用ペプシをから揚げ食べずに飲んでしまいました'],
-        ['猫耳','https://pbs.twimg.com/media/FUpC6h8UcAA8wrg?format=jpg&name=240x240'],
-        ['チーズ牛丼食べてから記憶ない'],
-        ['蚊なのか蚊じゃないのかよく分からない虫に小一時間ぐらい弄ばれてるんだけどよく考えたら虫にもちゃんと呼び名があるはずだからよく分からない虫って書くのは良いことじゃないのかもしれない'],
-        ['電音部  新エリア', 'https://pbs.twimg.com/media/FTdLSTIUsAA4bzb?format=jpg&name=small'],
-        ['水族館で一生魚だけ見ててください'],
-        ['湿原で失言'],
-        ['https://pbs.twimg.com/media/FSWhxg6VEAEBJXh?format=jpg&name=small'],
-        ['シコルドあるあるアラッー！のところで白パーティクル射精'],
-        ['※本ビデオ本編4章後半にイキスギあり'],
-        ['家賃と電気代割ってみた！'],
-        ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
-    ]
-    raika_tweet_pickup = random.choice(raika_tweets)
-    for tw in raika_tweet_pickup:
-        await ctx.send(tw)
-
 #画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *params):
@@ -217,6 +162,58 @@ async def effect(ctx, *params):
         await ctx.send(file=discord.File('temp_output.png'))
         os.remove('temp_input.png')
         os.remove('temp_output.png')
+
+#クワガタ
+@bot.command()
+async def kuwagata(ctx, *arg):
+    async def send_kuwagata(text):
+        await ctx.send(f"{ctx.author.name}さん見て見て\n{text}～")
+
+    if not arg:
+        await send_kuwagata('クワガタ')
+        return
+    for el in arg:
+        await send_kuwagata(el)
+
+#ping
+@bot.command()
+async def ping(ctx):
+    # Ping値を秒単位で取得
+    raw_ping = bot.latency
+    # ミリ秒に変換して丸める
+    ping = round(raw_ping * 1000)
+    await ctx.reply(f"Pong! (Latency : {ping}ms)", mention_author=False)
+
+#raika
+@bot.command(aliases=['aaruaika'])
+async def raika(ctx):
+    raika_tweets = [
+        ["Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません"],
+        ["はぁ、どちら様ですか？"],
+        ["帽子どかしたら脳があってしかもそれが糊", "https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large"],
+        ["https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small"],
+        ["アニメアイコン洗った？"],
+        ["今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ"],
+        ['私は " ゴキブリ " に家賃を払わせることで年収 " 1500万円 " を稼ぎました。\n詳細はこちらから→'],
+        ['セイキン夫婦がガチでハマってるお菓子ランキング2022'],
+        ['初めてなんだけど…下手だったらごめんねｼﾞｭｯﾎﾞｼﾞｭﾎﾞｼﾞｭﾙﾙﾙｽﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾎﾞﾁﾞｭｳｳｳｯﾊﾟｼﾞｭﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾙﾙﾙﾙﾙﾙﾙｼﾞｭｯﾊﾟｧ!ごっくん…'],
+        ['それでは恒例イモトを探せ'],
+        ['から揚げ専用ペプシをから揚げ食べずに飲んでしまいました'],
+        ['猫耳','https://pbs.twimg.com/media/FUpC6h8UcAA8wrg?format=jpg&name=240x240'],
+        ['チーズ牛丼食べてから記憶ない'],
+        ['蚊なのか蚊じゃないのかよく分からない虫に小一時間ぐらい弄ばれてるんだけどよく考えたら虫にもちゃんと呼び名があるはずだからよく分からない虫って書くのは良いことじゃないのかもしれない'],
+        ['電音部  新エリア', 'https://pbs.twimg.com/media/FTdLSTIUsAA4bzb?format=jpg&name=small'],
+        ['水族館で一生魚だけ見ててください'],
+        ['湿原で失言'],
+        ['https://pbs.twimg.com/media/FSWhxg6VEAEBJXh?format=jpg&name=small'],
+        ['シコルドあるあるアラッー！のところで白パーティクル射精'],
+        ['※本ビデオ本編4章後半にイキスギあり'],
+        ['家賃と電気代割ってみた！'],
+        ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
+    ]
+    raika_tweet_pickup = random.choice(raika_tweets)
+    for tw in raika_tweet_pickup:
+        await ctx.send(tw)
 
 
 ##########################################################################
