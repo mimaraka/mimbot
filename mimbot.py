@@ -167,7 +167,7 @@ async def effect(ctx, *params):
 @bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *arg):
     async def send_kuwagata(text):
-        await ctx.send(f"{ctx.author.name}さん見て見て\n{text}～")
+        await ctx.send(f"{ctx.author.display_name}さん見て見て\n{text}～")
 
     if not arg:
         await send_kuwagata('クワガタ')
