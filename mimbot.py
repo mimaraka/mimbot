@@ -55,7 +55,10 @@ async def on_message(ctx):
         return
 
     if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
-        images = ['https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png','https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg']
+        images = [
+            'https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png',
+            'https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg'
+        ]
         image_pickup = random.choice(images)
         await ctx.channel.send(image_pickup)
         return
