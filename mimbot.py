@@ -1,18 +1,19 @@
-import discord
-import math
-import random
+from discord.ext import commands
 #import cv2
 #herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
-import os
-#import numpy as np
-from discord.ext import commands
+import discord
 from PIL import Image
+import math
+#import numpy as np
+import os
+import random
+import requests
 import traceback
 
 intents = discord.Intents.all()
 
-#Botの接頭辞を^にする
-bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
+#Botの接頭辞を"^"にする
+bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 
 
 ##########################################################################
@@ -22,8 +23,7 @@ bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
 #起動時に動作する処理
 @bot.event
 async def on_ready():
-    # 起動したらターミナルにログイン通知が表示される
-    print('ログインしました')
+    print('Bot logged in.')
 
 
 #エラー発生時に動作する処理
@@ -189,6 +189,45 @@ async def ping(ctx):
     # ミリ秒に変換して丸める
     ping = round(raw_ping * 1000, 2)
     await ctx.reply(f"Pong! (Latency : {ping}ms)", mention_author=False)
+
+
+@bot.command()
+async def removebg(ctx):
+    removebg_apikey = os.getenv('REMOVEBG_APIKEY')
+
+    if ctx.message.reference is None:
+        await ctx.reply('加工したい画像に返信してください', mention_author=False)
+        return
+
+    mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+    if mes.attachments[0] is None:
+        await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
+        return
+
+    await mes.attachments[0].save('removebg_temp_input.png')
+
+    mes_pros = await ctx.reply('処理中です…', mention_author=False)
+
+    # RemoveBgAPI
+    response = requests.post(
+        'https://api.remove.bg/v1.0/removebg',
+        files={'image_file': open('removebg_temp_input.png', 'rb')},
+        data={'size': 'auto'},
+        headers={'X-Api-Key': removebg_apikey},
+    )
+    await mes_pros.delete()
+
+    if response.status_code == requests.codes.ok:
+        with open('removebg_temp_output.png', 'wb') as out:
+            out.write(response.content)
+            await ctx.send(file=discord.File('removebg_temp_output.png'))
+            os.remove('removebg_temp_input.png')
+            os.remove('removebg_temp_output.png')
+        print('Success!')
+
+    else:
+        print("Error:", response.status_code, response.text)
 
 
 #raika
