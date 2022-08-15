@@ -46,3 +46,6 @@
 
 - ### ^raika / ^aaruaika  
     Raikaさんのおもしろツイートガチャ
+
+- ### ^removebg
+    remove.bg APIを用いて画像の背景を透過します。

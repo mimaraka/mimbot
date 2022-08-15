@@ -238,14 +238,14 @@ async def removebg(ctx):
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
-    await mes.attachments[0].save('removebg_temp_input.png')
+    await mes.attachments[0].save('temp_removebg_input.png')
 
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
     # RemoveBgAPI
     response = requests.post(
         'https://api.remove.bg/v1.0/removebg',
-        files={'image_file': open('removebg_temp_input.png', 'rb')},
+        files={'image_file': open('temp_removebg_input.png', 'rb')},
         data={'size': 'auto'},
         headers={'X-Api-Key': removebg_apikey},
     )
@@ -255,11 +255,10 @@ async def removebg(ctx):
         with open('removebg_temp_output.png', 'wb') as out:
             out.write(response.content)
             await ctx.send(file=discord.File('removebg_temp_output.png'))
-            os.remove('removebg_temp_input.png')
+            os.remove('temp_removebg_input.png')
             os.remove('removebg_temp_output.png')
-        print('Success!')
     else:
-        print("Error:", response.status_code, response.text)
+        await ctx.send(f"Error:{response.status_code} {response.text}")
 
 
 ##########################################################################
