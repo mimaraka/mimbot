@@ -191,6 +191,39 @@ async def ping(ctx):
     await ctx.reply(f"Pong! (Latency : {ping}ms)", mention_author=False)
 
 
+#raika
+@bot.command(aliases=['aaruaika'])
+async def raika(ctx):
+    raika_tweets = [
+        ["Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません"],
+        ["はぁ、どちら様ですか？"],
+        ["帽子どかしたら脳があってしかもそれが糊", "https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large"],
+        ["https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small"],
+        ["アニメアイコン洗った？"],
+        ["今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ"],
+        ['私は " ゴキブリ " に家賃を払わせることで年収 " 1500万円 " を稼ぎました。\n詳細はこちらから→'],
+        ['セイキン夫婦がガチでハマってるお菓子ランキング2022'],
+        ['初めてなんだけど…下手だったらごめんねｼﾞｭｯﾎﾞｼﾞｭﾎﾞｼﾞｭﾙﾙﾙｽﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾎﾞﾁﾞｭｳｳｳｯﾊﾟｼﾞｭﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾙﾙﾙﾙﾙﾙﾙｼﾞｭｯﾊﾟｧ!ごっくん…'],
+        ['それでは恒例イモトを探せ'],
+        ['から揚げ専用ペプシをから揚げ食べずに飲んでしまいました'],
+        ['猫耳','https://pbs.twimg.com/media/FUpC6h8UcAA8wrg?format=jpg&name=240x240'],
+        ['チーズ牛丼食べてから記憶ない'],
+        ['蚊なのか蚊じゃないのかよく分からない虫に小一時間ぐらい弄ばれてるんだけどよく考えたら虫にもちゃんと呼び名があるはずだからよく分からない虫って書くのは良いことじゃないのかもしれない'],
+        ['電音部  新エリア', 'https://pbs.twimg.com/media/FTdLSTIUsAA4bzb?format=jpg&name=small'],
+        ['水族館で一生魚だけ見ててください'],
+        ['湿原で失言'],
+        ['https://pbs.twimg.com/media/FSWhxg6VEAEBJXh?format=jpg&name=small'],
+        ['シコルドあるあるアラッー！のところで白パーティクル射精'],
+        ['※本ビデオ本編4章後半にイキスギあり'],
+        ['家賃と電気代割ってみた！'],
+        ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
+    ]
+    raika_tweet_pickup = random.choice(raika_tweets)
+    for tw in raika_tweet_pickup:
+        await ctx.send(tw)
+
+
+#removebg
 @bot.command()
 async def removebg(ctx):
     removebg_apikey = os.getenv('REMOVEBG_APIKEY')
@@ -225,42 +258,8 @@ async def removebg(ctx):
             os.remove('removebg_temp_input.png')
             os.remove('removebg_temp_output.png')
         print('Success!')
-
     else:
         print("Error:", response.status_code, response.text)
-
-
-#raika
-@bot.command(aliases=['aaruaika'])
-async def raika(ctx):
-    raika_tweets = [
-        ["Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません"],
-        ["はぁ、どちら様ですか？"],
-        ["帽子どかしたら脳があってしかもそれが糊", "https://pbs.twimg.com/media/FM_1hGoVUAIdiGW?format=jpg&name=large"],
-        ["https://pbs.twimg.com/media/FPL_nzGVUAkVzmg?format=png&name=small"],
-        ["アニメアイコン洗った？"],
-        ["今脳内で生成されてる音でも書き起すかドンパッドンドドンパッチュチュンチュンチュチュンチュンドンパパッパッドドッパッドドドドドパッ"],
-        ['私は " ゴキブリ " に家賃を払わせることで年収 " 1500万円 " を稼ぎました。\n詳細はこちらから→'],
-        ['セイキン夫婦がガチでハマってるお菓子ランキング2022'],
-        ['初めてなんだけど…下手だったらごめんねｼﾞｭｯﾎﾞｼﾞｭﾎﾞｼﾞｭﾙﾙﾙｽﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾎﾞﾁﾞｭｳｳｳｯﾊﾟｼﾞｭﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞﾎﾞｼﾞｭﾙﾙﾙﾙﾙﾙﾙｼﾞｭｯﾊﾟｧ!ごっくん…'],
-        ['それでは恒例イモトを探せ'],
-        ['から揚げ専用ペプシをから揚げ食べずに飲んでしまいました'],
-        ['猫耳','https://pbs.twimg.com/media/FUpC6h8UcAA8wrg?format=jpg&name=240x240'],
-        ['チーズ牛丼食べてから記憶ない'],
-        ['蚊なのか蚊じゃないのかよく分からない虫に小一時間ぐらい弄ばれてるんだけどよく考えたら虫にもちゃんと呼び名があるはずだからよく分からない虫って書くのは良いことじゃないのかもしれない'],
-        ['電音部  新エリア', 'https://pbs.twimg.com/media/FTdLSTIUsAA4bzb?format=jpg&name=small'],
-        ['水族館で一生魚だけ見ててください'],
-        ['湿原で失言'],
-        ['https://pbs.twimg.com/media/FSWhxg6VEAEBJXh?format=jpg&name=small'],
-        ['シコルドあるあるアラッー！のところで白パーティクル射精'],
-        ['※本ビデオ本編4章後半にイキスギあり'],
-        ['家賃と電気代割ってみた！'],
-        ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
-    ]
-    raika_tweet_pickup = random.choice(raika_tweets)
-    for tw in raika_tweet_pickup:
-        await ctx.send(tw)
-
 
 
 ##########################################################################
