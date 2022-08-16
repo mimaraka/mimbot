@@ -44,15 +44,12 @@ async def on_message(ctx):
 
     if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
         await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
-        return
 
     if 'おくり' in str(ctx.content):
         await ctx.channel.send('おくりさんどれだけ性欲あるの')
-        return
 
     if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
         await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
-        return
 
     if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
         images = [
@@ -61,7 +58,6 @@ async def on_message(ctx):
         ]
         image_pickup = random.choice(images)
         await ctx.channel.send(image_pickup)
-        return
 
 
 
