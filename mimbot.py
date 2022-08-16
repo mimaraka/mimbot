@@ -16,6 +16,7 @@ intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 
 
+
 ##########################################################################
 ####    Bot Event
 ##########################################################################
@@ -30,7 +31,8 @@ async def on_ready():
 @bot.event
 async def on_command_error(ctx, error):
     orig_error = getattr(error, "original", error)
-    error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    #error_msg = ''.join(traceback.TracebackException.from_exception(orig_error).format())
+    error_msg = traceback.TracebackException.from_exception(orig_error).format()
     await ctx.send(error_msg)
 
 
@@ -255,6 +257,7 @@ async def removebg(ctx):
             os.remove('removebg_temp_output.png')
     else:
         await ctx.send(f"Error:{response.status_code} {response.text}")
+
 
 
 ##########################################################################
