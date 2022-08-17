@@ -25,7 +25,7 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 #起動時に動作する処理
 @bot.event
 async def on_ready():
-    print('Bot logged in.')
+    print('ログイン完了')
 
 
 #エラー発生時に動作する処理
