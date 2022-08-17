@@ -1,7 +1,7 @@
 discord.py[voice]>=1.7.3
 ffmpeg-python==0.2.0
-librosa==0.9.2
+#librosa==0.9.2
 numpy==1.22.4
 Pillow==9.1.1
-pysndfile==1.4.4
+#pysndfile==1.4.4
 requests==2.28.1
