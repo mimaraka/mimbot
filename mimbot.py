@@ -5,7 +5,7 @@ import discord
 from PIL import Image
 #import librosa
 import math
-#import numpy as np
+import numpy as np
 import os
 import random
 import re
