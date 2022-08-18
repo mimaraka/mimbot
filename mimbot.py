@@ -5,9 +5,10 @@ import discord
 from PIL import Image
 #import librosa
 import math
-import numpy as np
+#import numpy as np
 import os
 import random
+import re
 import requests
 import traceback
 
@@ -47,7 +48,7 @@ async def on_message(ctx):
     if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
         await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
 
-    if 'おくり' in str(ctx.content):
+    if re.search(r"お.{,2}く.{,2}り", str(ctx.content)):
         await ctx.channel.send('おくりさんどれだけ性欲あるの')
 
     if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
