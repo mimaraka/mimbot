@@ -392,9 +392,9 @@ async def uma(ctx):
 
     # 画像サイズ
     width = 400
-    height = 222
+    height = 225
     # 項目の間隔
-    margin = 47
+    margin = 45
     # 画像の背景色
     bg = (54, 57, 63)
     # 画像の初期化
