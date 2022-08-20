@@ -25,27 +25,33 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 ##########################################################################
 
 #添付ファイル処理用の関数
-async def attachments_procedure(ctx, type):
+async def attachments_procedure(ctx, filename, type):
     #返信をしていた場合
     if ctx.message.reference is not None:
         message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+        #返信元のメッセージにファイルが添付されていた場合
+        if message_reference.attachments is not None:
+            await message_reference.attachments[0].save(filename)
+            return True
+
         #返信元のメッセージにファイルが添付されていなかった場合
-        if message_reference.attachments is None:
+        else:
             await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
-            return
 
     #返信をしていなかった場合
     else:
-        #直近10件のメッセージの添付ファイルの取得を試みる
+        #直近10件のメッセージの添付ファイル・URLの取得を試みる
         async for message in ctx.history(limit=10):
             #メッセージに添付ファイルが存在する場合
             if message.attachments[0] is not None:
                 break
             #メッセージにURLが存在する場合
             elif 1:
-                return
+                break
+        #どちらも存在しない場合
         await ctx.reply('ファイルが添付されたメッセージに返信してください', mention_author=False)
-        return
+
+    return False
 
 
 
@@ -219,6 +225,8 @@ async def effect(ctx, *params):
         return
 
     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+    await ctx.send(len(mes.attachments))
 
     if mes.attachments is None:
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
