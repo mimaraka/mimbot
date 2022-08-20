@@ -3,7 +3,7 @@ from discord.ext import commands
 #herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
 import discord
 import glob
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
 #import librosa
 import math
 import numpy as np
