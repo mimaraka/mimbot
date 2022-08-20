@@ -333,7 +333,9 @@ async def removebg(ctx):
 @bot.command()
 async def debug(ctx):
     previous_message = [m async for m in ctx.channel.history(limit=2)][1]
+    previous_message2 = ctx.channel.history(limit=2)[1]
     await ctx.send(previous_message.content)
+    await ctx.send(previous_message2.content)
 
 
 # ウマ娘ガチャシミュレーター
