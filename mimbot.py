@@ -453,7 +453,7 @@ async def uma(ctx):
         if i % 5 == 4:
             img.save(f"assets/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
 
-    glob_uma_gacha_result_images = glob.glob(f"assets/temp/uma_gacha_{ctx.channel.id}_*.png")
+    glob_uma_gacha_result_images = sorted(glob.glob(f"assets/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     uma_gacha_result_images = list(map(lambda e: discord.File(e), glob_uma_gacha_result_images))
     await ctx.channel.send(files=uma_gacha_result_images)
