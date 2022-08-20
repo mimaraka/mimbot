@@ -2,6 +2,7 @@ from discord.ext import commands
 #import cv2
 #herokuでcv2をimportするとエラーが出たのでとりあえずPillowで代用
 import discord
+import datetime
 import glob
 from PIL import Image, ImageFont, ImageDraw
 #import librosa
