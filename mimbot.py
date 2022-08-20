@@ -370,7 +370,8 @@ async def uma(ctx):
             self.name = name
             self.rarity = rarity
             self.is_pickup = is_pickup
-        chara_list = []
+    
+    chara_list = []
 
     # CSVファイルから読み込み
     with open('assets/uma_chara_info.csv') as f:
