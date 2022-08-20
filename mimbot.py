@@ -382,8 +382,7 @@ async def uma(ctx):
     with open('assets/uma_chara_info.csv') as f:
         reader = csv.reader(f)
         for row in reader:
-            await ctx.send(row)
-            chara = Uma_Chara(row[0], row[1], row[2], row[3])
+            chara = Uma_Chara(int(row[0]), row[1], int(row[2]), int(row[3]))
             chara_list.append(chara)
 
     # 確率比[★1, ★2, ★3]
