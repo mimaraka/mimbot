@@ -226,9 +226,7 @@ async def effect(ctx, *params):
 
     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 
-    await ctx.send(len(mes.attachments))
-
-    if mes.attachments is None:
+    if len(mes.attachments) == 0:
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
@@ -487,7 +485,7 @@ async def uma(ctx):
             draw.rectangle((0, 0, width, height), fill=bg)
 
         # アイコン画像をuma_iconフォルダから読み込み&貼り付け(URLから読み込むと遅かった)
-        uma_image = Image.open(f"resources/uma_icon/i_{uma_gacha_lists.index(uma_gacha_result) + 1}.png")
+        uma_image = Image.open(f"assets/uma_icon/i_{uma_gacha_lists.index(uma_gacha_result) + 1}.png")
         img.paste(uma_image, (3, margin * (i % 5) + 5))
 
         # テキストを描画(星マーク)
@@ -497,9 +495,9 @@ async def uma(ctx):
 
         # 5連ごとに画像を書き出し
         if i % 5 == 4:
-            img.save(f"resources/temporally/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
+            img.save(f"assets/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
 
-    glob_uma_gacha_result_images = glob.glob(f"resources/temporally/uma_gacha_{ctx.channel.id}_*.png")
+    glob_uma_gacha_result_images = glob.glob(f"assets/temp/uma_gacha_{ctx.channel.id}_*.png")
 
     uma_gacha_result_images = list(map(lambda e: discord.File(e), glob_uma_gacha_result_images))
     await ctx.channel.send(files=uma_gacha_result_images)
