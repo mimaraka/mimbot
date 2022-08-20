@@ -235,25 +235,39 @@ async def effect(ctx, *params):
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
-    await mes.attachments[0].save('temp_input.png')
-
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
-    img = Image.open('temp_input.png')
+    for i in range(0, len(mes.attachments)):
+        filename_input = f'assets/temp/temp_input_{ctx.channel.id}_{i}.png'
+        filename_output = f'assets/temp/temp_output_{ctx.channel.id}_{i}.png'
+        await mes.attachments[i].save(filename_input)
 
-    if fxname in ['dist', 'distort', 'distortion']:
-        img_result = distort(img, values)
-    elif fxname in ['negative', 'nega']:
-        img_result = negative(img)
+        img = Image.open(filename_input)
+
+        if fxname in ['dist', 'distort', 'distortion']:
+            img_result = distort(img, values)
+        elif fxname in ['negative', 'nega']:
+            img_result = negative(img)
     
+        if not img_result is None:
+            #cv2.imwrite('temp_output.png',img_result)
+            img_result.save(filename_output)
+
     #処理中メッセージを削除
     await mes_pros.delete()
-    if not img_result is None:
-        #cv2.imwrite('temp_output.png',img_result)
-        img_result.save('temp_output.png')
-        await ctx.send(file=discord.File('temp_output.png'))
-        os.remove('temp_input.png')
-        os.remove('temp_output.png')
+
+    glob_img_results_list = sorted(glob.glob(f"assets/temp/temp_output_{ctx.channel.id}_*.png"))
+    glob_img_inputs_list = sorted(glob.glob(f"assets/temp/temp_input_{ctx.channel.id}_*.png"))
+
+    img_results_list = list(map(lambda e: discord.File(e), glob_img_results_list))
+    await ctx.channel.send(files=img_results_list)
+
+    for file in glob_img_results_list:
+        if os.path.isfile(file):
+            os.remove(file)
+    for file in glob_img_inputs_list:
+        if os.path.isfile(file):
+            os.remove(file)
 
 
 # クワガタ
