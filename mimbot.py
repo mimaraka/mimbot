@@ -405,10 +405,10 @@ async def uma(ctx):
     for i in range(10):
         w = weights if i < 9 else weights_10
 
-        chara_results_by_rarity = np.zeros(3)
+        chara_results_by_rarity = []
 
         # レア度1はピックアップが存在しないため等確率で選出
-        chara_results_by_rarity[0] = random.choice([ch for ch in chara_list if ch.rarity == 1])
+        chara_results_by_rarity.append(random.choice([ch for ch in chara_list if ch.rarity == 1]))
 
         # レア度2以降はピックアップの有無ごとに選出
         for r in range(2, 4):
@@ -425,10 +425,10 @@ async def uma(ctx):
                         w[r - 1] - len(list_pickup) * prob_pickup
                     ]
                     )[0]
-                chara_results_by_rarity[r - 1] = random.choice(chara_results_by_pickup)
+                chara_results_by_rarity.append(random.choice(chara_results_by_pickup))
             # ピックアップが存在しない場合
             else:
-                chara_results_by_rarity[r - 1] = random.choice([ch for ch in chara_list if ch.rarity == r])
+                chara_results_by_rarity.append(random.choice([ch for ch in chara_list if ch.rarity == r]))
 
         # 最終的な排出ウマ娘を決定
         chara_result = random.choices(chara_results_by_rarity, weights=w)[0]
