@@ -25,18 +25,26 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 ##########################################################################
 
 #添付ファイル処理用の関数
-async def attachments_procedure(ctx):
+async def attachments_procedure(ctx, type):
+    #返信をしていた場合
+    if ctx.message.reference is not None:
+        message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+        #返信元のメッセージにファイルが添付されていなかった場合
+        if message_reference.attachments is None:
+            await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
+            return
+
     #返信をしていなかった場合
-    if ctx.message.reference is None:
-        #直前のメッセージの添付ファイルの取得を試みる
-        
+    else:
+        #直近10件のメッセージの添付ファイルの取得を試みる
+        async for message in ctx.history(limit=10):
+            #メッセージに添付ファイルが存在する場合
+            if message.attachments[0] is not None:
+                break
+            #メッセージにURLが存在する場合
+            elif 1:
+                return
         await ctx.reply('ファイルが添付されたメッセージに返信してください', mention_author=False)
-        return
-
-    mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-
-    if mes.attachments[0] is None:
-        await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
 
@@ -212,7 +220,7 @@ async def effect(ctx, *params):
 
     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 
-    if mes.attachments[0] is None:
+    if mes.attachments is None:
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
@@ -303,7 +311,7 @@ async def removebg(ctx):
 
     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
 
-    if mes.attachments[0] is None:
+    if mes.attachments is None:
         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
         return
 
@@ -333,9 +341,7 @@ async def removebg(ctx):
 @bot.command()
 async def debug(ctx):
     previous_message = [m async for m in ctx.channel.history(limit=2)][1]
-    previous_message2 = ctx.channel.history(limit=2)[1]
     await ctx.send(previous_message.content)
-    await ctx.send(previous_message2.content)
 
 
 # ウマ娘ガチャシミュレーター
