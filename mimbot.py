@@ -23,24 +23,6 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 
 
 ##########################################################################
-####    Classes
-##########################################################################
-class Uma_Chara:
-    #アイコン画像の数字に一致
-    id = 0
-    name = ""
-    rarity = 0
-    is_pickup = 0
-
-    def __init__(self, id, name, rarity, is_pickup):
-        self.id = id
-        self.name = name
-        self.rarity = rarity
-        self.is_pickup = is_pickup
-
-
-
-##########################################################################
 ####    Functions
 ##########################################################################
 
@@ -376,7 +358,19 @@ async def debug(ctx):
 # ウマ娘ガチャシミュレーター
 @bot.command()
 async def uma(ctx):
-    chara_list = []
+    class Uma_Chara:
+        #アイコン画像の数字に一致
+        id = 0
+        name = ""
+        rarity = 0
+        is_pickup = 0
+
+        def __init__(self, id, name, rarity, is_pickup):
+            self.id = id
+            self.name = name
+            self.rarity = rarity
+            self.is_pickup = is_pickup
+        chara_list = []
 
     # CSVファイルから読み込み
     with open('assets/uma_chara_info.csv') as f:
