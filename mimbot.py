@@ -394,7 +394,7 @@ async def uma(ctx):
     width = 400
     height = 222
     # 項目の間隔
-    margin = 45
+    margin = 46
     # 画像の背景色
     bg = (54, 57, 63)
     # 画像の初期化
@@ -442,7 +442,7 @@ async def uma(ctx):
 
         # アイコン画像をuma_iconフォルダから読み込み&貼り付け(URLから読み込むと遅かった)
         uma_image = Image.open(f"assets/uma_icon/i_{chara_result.id}.png")
-        img.paste(uma_image, (3, margin * (i % 5) + 5))
+        img.paste(uma_image, (0, margin * (i % 5)))
 
         # テキストを描画(星マーク)
         draw.text((40, margin * (i % 5)), "★" * chara_result.rarity, color, font=font)
