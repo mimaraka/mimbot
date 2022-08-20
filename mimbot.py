@@ -412,8 +412,8 @@ async def uma(ctx):
 
         # レア度2以降はピックアップの有無ごとに選出
         for r in range(2, 4):
-            list_pickup = [ch for ch in chara_list if ch.rarily == r and ch.is_pickup]
-            list_not_pickup = [ch for ch in chara_list if ch.rarily == r and not ch.is_pickup]
+            list_pickup = [ch for ch in chara_list if ch.rarity == r and ch.is_pickup]
+            list_not_pickup = [ch for ch in chara_list if ch.rarity == r and not ch.is_pickup]
             # ピックアップ1体ごとの確率
             prob_pickup = 0.75 if r == 3 else 2.25
             # ピックアップが存在する場合
