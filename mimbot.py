@@ -394,7 +394,7 @@ async def uma(ctx):
     width = 400
     height = 222
     # 項目の間隔
-    margin = 46
+    margin = 47
     # 画像の背景色
     bg = (54, 57, 63)
     # 画像の初期化
@@ -445,9 +445,9 @@ async def uma(ctx):
         img.paste(uma_image, (0, margin * (i % 5)))
 
         # テキストを描画(星マーク)
-        draw.text((40, margin * (i % 5)), "★" * chara_result.rarity, color, font=font)
+        draw.text((40, margin * (i % 5) - 3), "★" * chara_result.rarity, color, font=font)
         # テキストを描画(ウマ娘名称)
-        draw.text((40, margin * (i % 5) + 15), chara_result.name, color, font=font)
+        draw.text((40, margin * (i % 5) + 12), chara_result.name, color, font=font)
 
         # 5連ごとに画像を書き出し
         if i % 5 == 4:
