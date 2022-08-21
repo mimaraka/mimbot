@@ -67,7 +67,7 @@ async def kotobagari_procedure(ctx):
             for row in reader:
                 channel_id_list = row
     
-    if not ctx.channel.id in channel_id_list:
+    if not str(ctx.channel.id) in channel_id_list:
         if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
             await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
 
