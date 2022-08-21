@@ -270,6 +270,20 @@ async def effect(ctx, *params):
             os.remove(file)
 
 
+# 言葉狩り機能のオンオフ
+@bot.command(aliases=['ktbgr'])
+async def kotobagari(ctx, *arg):
+    if arg:
+        kotoba_onoff = arg[0]
+        with open('data/kotobagari.csv') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                chara = Uma_Chara(int(row[0]), row[1], int(row[2]), int(row[3]))
+                chara_list.append(chara)
+        if kotoba_onoff in ['on', 'ON']:
+            
+
+
 # クワガタ
 @bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *arg):
@@ -388,7 +402,7 @@ async def uma(ctx):
     chara_list = []
 
     # CSVファイルから読み込み
-    with open('assets/uma_chara_info.csv') as f:
+    with open('data/uma_chara_info.csv') as f:
         reader = csv.reader(f)
         for row in reader:
             chara = Uma_Chara(int(row[0]), row[1], int(row[2]), int(row[3]))
@@ -450,7 +464,7 @@ async def uma(ctx):
             draw.rectangle((0, 0, width, height), fill=bg)
 
         # アイコン画像をuma_iconフォルダから読み込み&貼り付け(URLから読み込むと遅かった)
-        uma_image = Image.open(f"assets/uma_icon/i_{chara_result.id}.png")
+        uma_image = Image.open(f"data/uma_icon/i_{chara_result.id}.png")
         img.paste(uma_image, (0, margin * (i % 5) + 5))
 
         # テキストを描画(星マーク)
@@ -460,9 +474,9 @@ async def uma(ctx):
 
         # 5連ごとに画像を書き出し
         if i % 5 == 4:
-            img.save(f"assets/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
+            img.save(f"data/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
 
-    glob_uma_gacha_result_images = sorted(glob.glob(f"assets/temp/uma_gacha_{ctx.channel.id}_*.png"))
+    glob_uma_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     uma_gacha_result_images = list(map(lambda e: discord.File(e), glob_uma_gacha_result_images))
     await ctx.channel.send(files=uma_gacha_result_images)
