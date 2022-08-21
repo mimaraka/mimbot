@@ -300,7 +300,7 @@ async def kotobagari(ctx, *arg):
             channel_id_list.append(ctx.channel.id)
             await ctx.send('このチャンネルの言葉狩り機能をオフにしました。')
         
-        with open('data/kotobagari.csv') as f:
+        with open('data/kotobagari.csv', 'w') as f:
             writer = csv.writer(f)
             writer.writerow(channel_id_list)
 
