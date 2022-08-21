@@ -71,7 +71,7 @@ async def kotobagari_procedure(ctx):
         if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
             await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
 
-        if re.search(r"(お|オ|o)((\s*|᠎*)*|.{,3})(く|ク|ku)((\s*|᠎*)*|.{,3})(り|リ|ri)", str(ctx.content)):
+        if re.search(r"(お|オ)((\s*|᠎*)*|.{,3})(く|ク)((\s*|᠎*)*|.{,3})(り|リ)", str(ctx.content)):
             await ctx.channel.send('おくりさんどれだけ性欲あるの')
 
         if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
