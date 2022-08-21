@@ -238,8 +238,8 @@ async def effect(ctx, *params):
     mes_pros = await ctx.reply('処理中です…', mention_author=False)
 
     for i in range(0, len(mes.attachments)):
-        filename_input = f'assets/temp/temp_input_{ctx.channel.id}_{i}.png'
-        filename_output = f'assets/temp/temp_output_{ctx.channel.id}_{i}.png'
+        filename_input = f'data/temp/temp_input_{ctx.channel.id}_{i}.png'
+        filename_output = f'data/temp/temp_output_{ctx.channel.id}_{i}.png'
         await mes.attachments[i].save(filename_input)
 
         img = Image.open(filename_input)
@@ -256,8 +256,8 @@ async def effect(ctx, *params):
     #処理中メッセージを削除
     await mes_pros.delete()
 
-    glob_img_results_list = sorted(glob.glob(f"assets/temp/temp_output_{ctx.channel.id}_*.png"))
-    glob_img_inputs_list = sorted(glob.glob(f"assets/temp/temp_input_{ctx.channel.id}_*.png"))
+    glob_img_results_list = sorted(glob.glob(f"data/temp/temp_output_{ctx.channel.id}_*.png"))
+    glob_img_inputs_list = sorted(glob.glob(f"data/temp/temp_input_{ctx.channel.id}_*.png"))
 
     img_results_list = list(map(lambda e: discord.File(e), glob_img_results_list))
     await ctx.channel.send(files=img_results_list)
@@ -277,10 +277,21 @@ async def kotobagari(ctx, *arg):
         kotoba_onoff = arg[0]
         with open('data/kotobagari.csv') as f:
             reader = csv.reader(f)
+            channel_id_list = []
             for row in reader:
-                chara = Uma_Chara(int(row[0]), row[1], int(row[2]), int(row[3]))
-                chara_list.append(chara)
-        if kotoba_onoff in ['on', 'ON']:
+                channel_id_list = row
+            
+        if kotoba_onoff in ['on', 'ON'] and ctx.channel.id in channel_id_list:
+            channel_id_list = [id for id in channel_id_list if not id == ctx.channel.id]
+        elif kotoba_onoff in ['off', 'OFF'] and not ctx.channel.id in channel_id_list:
+            channel_id_list.append(ctx.channel.id)
+        
+        with open('data/kotobagari.csv') as f:
+            writer = csv.writer(f)
+            writer.writerow(channel_id_list)
+
+
+
             
 
 
