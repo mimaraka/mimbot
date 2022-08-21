@@ -365,16 +365,7 @@ async def raika(ctx):
 @bot.command()
 async def okuri(ctx, *arg):
     if arg and len(arg) == 2:
-        text = arg[0]
-        aru_nai = arg[1]
-        suffix = ''
-        if (aru_nai in [1, 'true']):
-            suffix = 'あるの'
-        elif (aru_nai in [0, 'false']):
-            suffix = 'ないの'
-        else:
-            return
-        await ctx.send(f'おくりさんどれだけ{text}{suffix}')
+        await ctx.send(f'おくりさんどれだけ{arg[0]}{arg[1]}の')
 
 
 # removebg
