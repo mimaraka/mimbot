@@ -293,13 +293,12 @@ async def kotobagari(ctx, *arg):
             for row in reader:
                 channel_id_list = row
             
-        if kotoba_onoff in ['on', 'ON'] and ctx.channel.id in channel_id_list:
-            channel_id_list = [id for id in channel_id_list if not id == ctx.channel.id]
+        if kotoba_onoff in ['on', 'ON'] and str(ctx.channel.id) in channel_id_list:
+            channel_id_list = [id for id in channel_id_list if not id == str(ctx.channel.id)]
             await ctx.send('このチャンネルの言葉狩り機能をオンにしました。')
-        elif kotoba_onoff in ['off', 'OFF'] and not ctx.channel.id in channel_id_list:
-            channel_id_list.append(ctx.channel.id)
+        elif kotoba_onoff in ['off', 'OFF'] and not str(ctx.channel.id) in channel_id_list:
+            channel_id_list.append(str(ctx.channel.id))
             await ctx.send('このチャンネルの言葉狩り機能をオフにしました。')
-            await ctx.send(channel_id_list)
         
         with open('data/kotobagari.csv', 'w') as f:
             writer = csv.writer(f)
