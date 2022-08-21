@@ -299,6 +299,7 @@ async def kotobagari(ctx, *arg):
         elif kotoba_onoff in ['off', 'OFF'] and not ctx.channel.id in channel_id_list:
             channel_id_list.append(ctx.channel.id)
             await ctx.send('このチャンネルの言葉狩り機能をオフにしました。')
+            await ctx.send(channel_id_list)
         
         with open('data/kotobagari.csv', 'w') as f:
             writer = csv.writer(f)
