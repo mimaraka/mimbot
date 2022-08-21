@@ -56,6 +56,39 @@ async def attachments_procedure(ctx, filename, type):
     return False
 
 
+async def kotobagari_procedure(ctx):
+    # メッセージ送信者がBotだった場合は無視する
+    if ctx.author.bot:
+        return
+
+    channel_id_list = []
+    with open('data/kotobagari.csv') as f:
+            reader = csv.reader(f)
+            for row in reader:
+                channel_id_list = row
+    
+    if not ctx.channel.id in channel_id_list:
+        if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
+            await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
+
+        if re.search(r"(お|オ|o)((\s*|᠎*)*|.{,3})(く|ク|ku)((\s*|᠎*)*|.{,3})(り|リ|ri)", str(ctx.content)):
+            await ctx.channel.send('おくりさんどれだけ性欲あるの')
+
+        if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
+            await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
+
+        if 'さかな' in str(ctx.content) or '魚' in str(ctx.content):
+            await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif')
+
+        if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
+            images = [
+                'https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png',
+                'https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg'
+            ]
+            image_pickup = random.choice(images)
+            await ctx.channel.send(image_pickup)
+
+
 
 ##########################################################################
 ####    Bot Event
@@ -79,29 +112,8 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_message(ctx):
     await bot.process_commands(ctx)
-    # メッセージ送信者がBotだった場合は無視する
-    if ctx.author.bot:
-        return
-
-    if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
-        await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
-
-    if re.search(r"(お|オ|o)((\s*|᠎*)*|.{,3})(く|ク|ku)((\s*|᠎*)*|.{,3})(り|リ|ri)", str(ctx.content)):
-        await ctx.channel.send('おくりさんどれだけ性欲あるの')
-
-    if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
-        await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
-
-    if 'さかな' in str(ctx.content) or '魚' in str(ctx.content):
-        await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif')
-
-    if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
-        images = [
-            'https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png',
-            'https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg'
-        ]
-        image_pickup = random.choice(images)
-        await ctx.channel.send(image_pickup)
+    # 言葉狩り機能
+    await kotobagari_procedure(ctx)
 
 
 
@@ -275,24 +287,23 @@ async def effect(ctx, *params):
 async def kotobagari(ctx, *arg):
     if arg:
         kotoba_onoff = arg[0]
+        channel_id_list = []
         with open('data/kotobagari.csv') as f:
             reader = csv.reader(f)
-            channel_id_list = []
             for row in reader:
                 channel_id_list = row
             
         if kotoba_onoff in ['on', 'ON'] and ctx.channel.id in channel_id_list:
             channel_id_list = [id for id in channel_id_list if not id == ctx.channel.id]
+            await ctx.send('このチャンネルの言葉狩り機能をオンにしました。')
         elif kotoba_onoff in ['off', 'OFF'] and not ctx.channel.id in channel_id_list:
             channel_id_list.append(ctx.channel.id)
+            await ctx.send('このチャンネルの言葉狩り機能をオフにしました。')
         
         with open('data/kotobagari.csv') as f:
             writer = csv.writer(f)
             writer.writerow(channel_id_list)
 
-
-
-            
 
 
 # クワガタ
