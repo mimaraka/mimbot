@@ -27,13 +27,13 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 ##########################################################################
 
 #添付ファイル処理用の関数
-async def attachments_procedure(ctx, filename, type):
+async def attachments_procedure(ctx, filepath, type):
     #返信をしていた場合
     if ctx.message.reference is not None:
         message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
         #返信元のメッセージにファイルが添付されていた場合
         if message_reference.attachments is not None:
-            await message_reference.attachments[0].save(filename)
+            await message_reference.attachments[0].save(filepath)
             return True
 
         #返信元のメッセージにファイルが添付されていなかった場合
@@ -404,12 +404,6 @@ async def removebg(ctx):
             os.remove('removebg_temp_output.png')
     else:
         await ctx.send(f"Error:{response.status_code} {response.text}")
-
-
-@bot.command()
-async def debug(ctx):
-    previous_message = [m async for m in ctx.channel.history(limit=2)][1]
-    await ctx.send(previous_message.content)
 
 
 # ウマ娘ガチャシミュレーター
