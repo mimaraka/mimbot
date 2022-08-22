@@ -268,16 +268,16 @@ async def effect(ctx, *params):
     #処理中メッセージを削除
     await mes_pros.delete()
 
-    glob_img_results_list = sorted(glob.glob(f"data/temp/temp_output_{ctx.channel.id}_*.png"))
-    glob_img_inputs_list = sorted(glob.glob(f"data/temp/temp_input_{ctx.channel.id}_*.png"))
+    glob_result_images = sorted(glob.glob(f"data/temp/temp_output_{ctx.channel.id}_*.png"))
+    glob_input_images = sorted(glob.glob(f"data/temp/temp_input_{ctx.channel.id}_*.png"))
 
-    img_results_list = list(map(lambda e: discord.File(e), glob_img_results_list))
-    await ctx.channel.send(files=img_results_list)
+    result_images = list(map(lambda e: discord.File(e), glob_result_images))
+    await ctx.channel.send(files=result_images)
 
-    for file in glob_img_results_list:
+    for file in glob_result_images:
         if os.path.isfile(file):
             os.remove(file)
-    for file in glob_img_inputs_list:
+    for file in glob_input_images:
         if os.path.isfile(file):
             os.remove(file)
 
@@ -298,7 +298,7 @@ async def kotobagari(ctx, *arg):
             await ctx.send('このチャンネルの言葉狩り機能をオンにしました。')
         elif kotoba_onoff in ['off', 'OFF'] and not str(ctx.channel.id) in channel_id_list:
             channel_id_list.append(str(ctx.channel.id))
-            await ctx.send('このチャンネルの言葉狩り機能をオフにしました。')
+            await ctx.send('このチャンネルの言葉狩り機能を一時的にオフにしました。')
         
         with open('data/kotobagari.csv', 'w') as f:
             writer = csv.writer(f)
@@ -505,12 +505,12 @@ async def uma(ctx):
         if i % 5 == 4:
             img.save(f"data/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
 
-    glob_uma_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
+    glob_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
-    uma_gacha_result_images = list(map(lambda e: discord.File(e), glob_uma_gacha_result_images))
-    await ctx.channel.send(files=uma_gacha_result_images)
+    gacha_result_images = list(map(lambda e: discord.File(e), glob_gacha_result_images))
+    await ctx.channel.send(files=gacha_result_images)
 
-    for file in glob_uma_gacha_result_images:
+    for file in glob_gacha_result_images:
         if os.path.isfile(file):
             os.remove(file)
 
