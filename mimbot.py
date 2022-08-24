@@ -518,7 +518,7 @@ async def uma(ctx):
 
     # ガチャ使用量の情報
 
-    gacha_usage = 0
+    gacha_usage = 1
 
     for el in usage_list:
         if str(ctx.author) == el[0]:
@@ -526,20 +526,21 @@ async def uma(ctx):
             el[1] = str(gacha_usage)
             break
     else:
-        usage_list.append([ctx.author, 1])
+        usage_list.append([ctx.author, gacha_usage])
 
-    await ctx.send(f'消費ジュエル数：{gacha_usage * 1500}個　使用金額：￥{gacha_usage * 3000}')
+    usage_info = f'消費ジュエル数：{gacha_usage * 1500}個　使用金額：￥{gacha_usage * 3000}'
 
     with open('data/uma_gacha_usage.csv', 'w') as f:
             writer = csv.writer(f)
             for row in usage_list:
                 writer.writerow(row)
 
-    # 生成した画像の後処理
     glob_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     gacha_result_images = list(map(lambda e: discord.File(e), glob_gacha_result_images))
-    await ctx.channel.send(files=gacha_result_images)
+    await ctx.channel.send(content = usage_info, files=gacha_result_images)
+
+    # 生成した画像の後処理
 
     for file in glob_gacha_result_images:
         if os.path.isfile(file):
