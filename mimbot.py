@@ -52,7 +52,7 @@ async def attachments_procedure(ctx, filepath, type):
                     i += 1
                 break
             #メッセージにURLが存在する場合
-            elif 1:#条件
+            elif re.fullmatch(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-]+', message.content):
                 #url先のファイル形式の判定の処理
                 break
         #どちらも存在しない場合
@@ -538,7 +538,7 @@ async def uma(ctx):
     glob_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     gacha_result_images = list(map(lambda e: discord.File(e), glob_gacha_result_images))
-    await ctx.channel.send(content = usage_info, files=gacha_result_images)
+    await ctx.channel.send(files=gacha_result_images, content = usage_info)
 
     # 生成した画像の後処理
 
