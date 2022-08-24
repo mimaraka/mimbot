@@ -350,7 +350,7 @@ async def ping(ctx):
 
 # raika
 @bot.command(aliases=['aaruaika'])
-async def raika(ctx):
+async def raika(ctx, *arg):
     raika_tweets = [
         ["Twitterをやってるときの指の動作またはスマートフォンを凝視するという行動が同じだけなのであって容姿がこのような姿であるという意味ではありません"],
         ["はぁ、どちら様ですか？"],
@@ -374,10 +374,13 @@ async def raika(ctx):
         ['※本ビデオ本編4章後半にイキスギあり'],
         ['家賃と電気代割ってみた！'],
         ['لا أستطيع التفكير في الأمر بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة ، ولا يمكنني التفكير فيه بالفطرة السليمة لا أستطيع التفكير في الأمر بالفطرة السليمة لا يمكنني التفكير فيه بالفطرة السليمة لا يمكن سليم لا يمكن تصوره بالحس', 'https://pbs.twimg.com/media/FNlO4ivVcAEaFaP?format=jpg&name=small']
+        ['可愛いすぎ注意もよく分からないけどよく考えたらオッス大丈夫かも聞いた事ない言葉だな', 'https://pbs.twimg.com/media/FMfxSWQaIAA_haI?format=jpg&name=medium']
     ]
-    raika_tweet_pickup = random.choice(raika_tweets)
-    for tw in raika_tweet_pickup:
-        await ctx.send(tw)
+    n = int(arg[0]) if arg else 1
+    for _ in range(n):
+        raika_tweet_pickup = random.choice(raika_tweets)
+        for tw in raika_tweet_pickup:
+            await ctx.send(tw)
 
 
 # removebg
