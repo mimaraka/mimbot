@@ -310,7 +310,6 @@ async def kotobagari(ctx, *arg):
             writer.writerow(channel_id_list)
 
 
-
 # クワガタ
 @bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *arg):
@@ -322,6 +321,21 @@ async def kuwagata(ctx, *arg):
         return
     for el in arg:
         await send_kuwagata(el)
+
+
+# okuri
+@bot.command()
+async def okuri(ctx, *arg):
+    if arg:
+        if len(arg) > 2:
+            text = arg
+        elif len(arg) == 2:
+            text = [arg[0], arg[1], 'の']
+        else:
+            text = [arg[0], 'ある', 'の']
+    else:
+        text = ['性欲', 'ある', 'の']
+    await ctx.send(f'おくりさんどれだけ{text[0]}{text[1]}{text[2]}')
 
 
 # ping
@@ -364,18 +378,6 @@ async def raika(ctx):
     raika_tweet_pickup = random.choice(raika_tweets)
     for tw in raika_tweet_pickup:
         await ctx.send(tw)
-
-
-# okuri
-@bot.command()
-async def okuri(ctx, *arg):
-    if arg and len(arg) > 1:
-        text = arg
-    elif arg:
-        text = [arg[0], 'ある']
-    else:
-        text = ['性欲', 'ある']
-    await ctx.send(f'おくりさんどれだけ{text[0]}{text[1]}の')
 
 
 # removebg
@@ -538,7 +540,7 @@ async def uma(ctx):
     glob_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     gacha_result_images = list(map(lambda e: discord.File(e), glob_gacha_result_images))
-    await ctx.channel.send(files=gacha_result_images, content = usage_info)
+    await ctx.channel.send(content = usage_info, files=gacha_result_images)
 
     # 生成した画像の後処理
 
