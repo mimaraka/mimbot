@@ -45,10 +45,15 @@ async def attachments_procedure(ctx, filepath, type):
         #直近10件のメッセージの添付ファイル・URLの取得を試みる
         async for message in ctx.history(limit=10):
             #メッセージに添付ファイルが存在する場合
-            if message.attachments[0] is not None:
+            if message.attachments is not None:
+                i = 0
+                for el in message.attachments:
+                    await message_reference.attachments[i].save(f'{filepath}_{i}')
+                    i += 1
                 break
             #メッセージにURLが存在する場合
-            elif 1:
+            elif 1:#条件
+                #url先のファイル形式の判定の処理
                 break
         #どちらも存在しない場合
         await ctx.reply('ファイルが添付されたメッセージに返信してください', mention_author=False)
@@ -428,13 +433,20 @@ async def uma(ctx):
             self.is_pickup = is_pickup
     
     chara_list = []
+    usage_list = []
 
-    # CSVファイルから読み込み
+    # CSVファイルからキャラ情報を読み込み
     with open('data/uma_chara_info.csv') as f:
         reader = csv.reader(f)
         for row in reader:
             chara = Uma_Chara(int(row[0]), row[1], int(row[2]), int(row[3]))
             chara_list.append(chara)
+
+    # CSVファイルからガチャ使用量の情報を読み込み
+    with open('data/uma_gacha_usage.csv') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            usage_list.append(row)
 
     # 確率比[★1, ★2, ★3]
     weights = [79, 18, 3]
@@ -504,6 +516,26 @@ async def uma(ctx):
         if i % 5 == 4:
             img.save(f"data/temp/uma_gacha_{ctx.channel.id}_{int(i / 5) + 1}.png")
 
+    # ガチャ使用量の情報
+
+    gacha_usage = 0
+
+    for el in usage_list:
+        if str(ctx.author) == el[0]:
+            gacha_usage = int(el[1]) + 1
+            el[1] = str(gacha_usage)
+            break
+    else:
+        usage_list.append([ctx.author, 1])
+
+    await ctx.send(f'消費ジュエル数：{gacha_usage * 1500}個　使用金額：￥{gacha_usage * 3000}')
+
+    with open('data/uma_gacha_usage.csv', 'w') as f:
+            writer = csv.writer(f)
+            for row in usage_list:
+                writer.writerow(row)
+
+    # 生成した画像の後処理
     glob_gacha_result_images = sorted(glob.glob(f"data/temp/uma_gacha_{ctx.channel.id}_*.png"))
 
     gacha_result_images = list(map(lambda e: discord.File(e), glob_gacha_result_images))
