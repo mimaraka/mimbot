@@ -73,19 +73,19 @@ async def kotobagari_procedure(ctx):
                 channel_id_list = row
     
     if not str(ctx.channel.id) in channel_id_list:
-        if 'あつい' in str(ctx.content) or '暑' in str(ctx.content):
+        if re.search(r'(あつい|アツい|暑)', str(ctx.content)):
             await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
 
         if re.search(r"(お|オ)((\s*|᠎*)*|.{,3})(く|ク)((\s*|᠎*)*|.{,3})(り|リ)", str(ctx.content)):
             await ctx.channel.send('おくりさんどれだけ性欲あるの')
 
-        if 'ごきぶり' in str(ctx.content) or 'ゴキブリ' in str(ctx.content):
+        if re.search(r'(ごきぶり|ゴキブリ)', str(ctx.content)):
             await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
 
-        if 'さかな' in str(ctx.content) or '魚' in str(ctx.content):
+        if re.search(r'(さかな|サカナ|魚)', str(ctx.content)):
             await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif')
 
-        if 'ひる' in str(ctx.content) or '昼' in str(ctx.content):
+        if re.search(r'(ひる|ヒル|昼)', str(ctx.content)):
             images = [
                 'https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png',
                 'https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg'
