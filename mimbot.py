@@ -61,6 +61,21 @@ async def attachments_procedure(ctx, filepath, type):
     return False
 
 
+# def searchex(tup, strength):
+#     pattern = r''
+#     for string in tup:
+#         if not type(string) == str:
+#             return False
+#         rstr = r''
+#         for c in string:
+#             if c in ['.', '+', '*', '\\', '?', '{', '}', '(', ')', '[', ']', '^', '$', '-', '|', '/']:
+#                 c = '\\' + c
+#             rstr += r'{}'.format(c) + r'((\s*|᠎*)*|.{,3})'
+#         pattern += r'(' + rstr + r')' + r'|'
+#     pattern = pattern[:-1]
+    
+
+
 async def kotobagari_procedure(ctx):
     # メッセージ送信者がBotだった場合は無視する
     if ctx.author.bot:
@@ -72,7 +87,11 @@ async def kotobagari_procedure(ctx):
             for row in reader:
                 channel_id_list = row
     
+    # ※正規表現の方が処理が少し高速で、複数の文字列の検索もよりスマートに書ける
     if not str(ctx.channel.id) in channel_id_list:
+        if re.search(r'(あーめん|アーメン)', str(ctx.content)):
+            await ctx.channel.send('https://cdn.discordapp.com/attachments/964831309627289620/1012764896900956281/unknown.png')
+
         if re.search(r'(あつい|アツい|暑)', str(ctx.content)):
             await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
 
