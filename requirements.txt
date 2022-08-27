@@ -4,5 +4,4 @@ ffmpeg-python==0.2.0
 numpy==1.22.4
 Pillow==9.1.1
 #pysndfile==1.4.4
-pyarmor==7.6.1
 requests==2.28.1
