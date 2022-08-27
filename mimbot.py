@@ -26,56 +26,6 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 ####    Functions
 ##########################################################################
 
-#添付ファイル処理用の関数
-async def attachments_procedure(ctx, filepath, type):
-    #返信をしていた場合
-    if ctx.message.reference is not None:
-        message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-        #返信元のメッセージにファイルが添付されていた場合
-        if message_reference.attachments is not None:
-            await message_reference.attachments[0].save(filepath)
-            return True
-
-        #返信元のメッセージにファイルが添付されていなかった場合
-        else:
-            await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
-
-    #返信をしていなかった場合
-    else:
-        #直近10件のメッセージの添付ファイル・URLの取得を試みる
-        async for message in ctx.history(limit=10):
-            #メッセージに添付ファイルが存在する場合
-            if message.attachments is not None:
-                i = 0
-                for el in message.attachments:
-                    await message_reference.attachments[i].save(f'{filepath}_{i}')
-                    i += 1
-                break
-            #メッセージにURLが存在する場合
-            elif re.fullmatch(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-]+', message.content):
-                #url先のファイル形式の判定の処理
-                break
-        #どちらも存在しない場合
-        await ctx.reply('ファイルが添付されたメッセージに返信してください', mention_author=False)
-
-    return False
-
-
-# def searchex(tup, strength):
-#     pattern = r''
-#     for string in tup:
-#         if not type(string) == str:
-#             return False
-#         rstr = r''
-#         for c in string:
-#             if c in ['.', '+', '*', '\\', '?', '{', '}', '(', ')', '[', ']', '^', '$', '-', '|', '/']:
-#                 c = '\\' + c
-#             rstr += r'{}'.format(c) + r'((\s*|᠎*)*|.{,3})'
-#         pattern += r'(' + rstr + r')' + r'|'
-#     pattern = pattern[:-1]
-    
-
-
 async def kotobagari_procedure(ctx):
     # メッセージ送信者がBotだった場合は無視する
     if ctx.author.bot:
@@ -144,54 +94,6 @@ async def on_message(ctx):
 ##########################################################################
 ####    Bot Command
 ##########################################################################
-
-# @bot.command()
-# async def bpm(ctx):
-#     duration = 30
-#     x_sr = 200
-#     bpm_min, bpm_max = 60, 240
-
-#     if ctx.message.reference is None:
-#         await ctx.reply('適用したい音声ファイルが添付されたメッセージに返信してください', mention_author=False)
-#         return
-
-#     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
-
-#     if mes.attachments[0] is None:
-#         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
-#         return
-
-#     file_name = mes.attachments[0].filename
-
-#     await mes.attachments[0].save(file_name)
-
-#     mes_pros = await ctx.reply('処理中です…', mention_author=False)
-
-#     # 楽曲の信号を読み込む
-#     y, sr = librosa.load(file_name, offset=38, duration=duration, mono=True)
-
-#     # ビート検出用信号の生成
-#     # リサンプリング & パワー信号の抽出
-#     x = np.abs(librosa.resample(y, sr, x_sr)) ** 2
-#     x_len = len(x)
-
-#     # 各BPMに対応する複素正弦波行列を生成
-#     M = np.zeros((bpm_max, x_len), dtype=np.complex)
-#     for bpm in range(bpm_min, bpm_max): 
-#         thete = 2 * np.pi * (bpm/60) * (np.arange(0, x_len) / x_sr)
-#         M[bpm] = np.exp(-1j * thete)
-
-#     # 各BPMとのマッチング度合い計算
-#     #（複素正弦波行列とビート検出用信号との内積）
-#     x_bpm = np.abs(np.dot(M, x))
-
-#     # BPM　を算出
-#     bpm = np.argmax(x_bpm)
-
-#     await mes_pros.delete()
-#     await ctx.send(f'BPM: {bpm}')
-#     os.remove(file_name)
-
 
 # 画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
