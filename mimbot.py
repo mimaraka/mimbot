@@ -121,7 +121,7 @@ async def kotobagari_procedure(ctx):
 #起動時に動作する処理
 @bot.event
 async def on_ready():
-    print('ログイン完了')
+    print('ログインしました')
 
 
 #エラー発生時に動作する処理
