@@ -1,1 +1,1 @@
-mimbot: python mimbot.py 
+main: python main.py 
