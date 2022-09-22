@@ -482,7 +482,9 @@ async def uma(ctx):
             async def callback(self, interaction):
                 response = interaction.response
                 await response.edit_message(view=None)
-                await uma(ctx)
+                context = ctx
+                context.author = interaction.user
+                await uma(context)
 
         button = Button_Uma(style=discord.ButtonStyle.success, label='もう一回引く')
 
