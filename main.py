@@ -425,7 +425,6 @@ async def uma(ctx):
 
             if chara_result.id in chara_id_list:
                 adjust_x = -11 if chara_result.rarity == 2 else 0
-                # 女神像
                 megami = Image.open(f'{path_uma_gacha}/textures/icon_megami.png')
                 megami_x = 4 if chara_result.rarity == 3 else 26
                 m_img.composit(megami, (x + megami_x + adjust_x, y + 300))
