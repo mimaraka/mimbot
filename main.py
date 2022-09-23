@@ -348,16 +348,17 @@ async def uma(ctx):
         with open('data/csv/uma_gacha_usage.csv') as f:
             reader = csv.reader(f)
             for row in reader:
-                u = Gacha_Usage(row[0], [int(s) for s in row[1].split('/')], int(row[2]))
+                u = Gacha_Usage(int(row[0]), [int(s) for s in row[1].split('/')], int(row[2]))
                 usage_list.append(u)
 
         chara_id_list = []
         exchange_point = 0
         for i, u in enumerate(usage_list):
-            if str(ctx.author) == u.user:
+            if ctx.author.id == u.user:
                 chara_id_list = u.chara_id_list
                 exchange_point = u.exchange_point
-                usage_list.pop(i)       
+                usage_list.pop(i)
+            
 
         weights = [79, 18, 3]
         weights_10 = [0, 97, 3]
@@ -424,6 +425,7 @@ async def uma(ctx):
 
             if chara_result.id in chara_id_list:
                 adjust_x = -11 if chara_result.rarity == 2 else 0
+                # 女神像
                 megami = Image.open(f'{path_uma_gacha}/textures/icon_megami.png')
                 megami_x = 4 if chara_result.rarity == 3 else 26
                 m_img.composit(megami, (x + megami_x + adjust_x, y + 300))
@@ -492,12 +494,12 @@ async def uma(ctx):
         view.timeout = None
         view.add_item(button)
 
-        await ctx.send(file=gacha_result_image, view=view)
+        await ctx.send(content=f'<@{ctx.author.id}>', file=gacha_result_image, view=view)
 
     if os.path.isfile(path_output):
         os.remove(path_output)
 
-    usage = Gacha_Usage(str(ctx.author), chara_id_list, exchange_point)
+    usage = Gacha_Usage(ctx.author.id, chara_id_list, exchange_point)
     usage_list.append(usage)
 
     with open('data/csv/uma_gacha_usage.csv', 'w') as f:
