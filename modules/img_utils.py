@@ -1,5 +1,7 @@
+# 画像処理に用いる汎用数値計算関数
 import random
 
+# 最小値を設定
 def minlim(val, min):
     if val < min:
         return min
@@ -7,6 +9,7 @@ def minlim(val, min):
         return val
 
 
+# 最大値を設定
 def maxlim(val, max):
     if val > max:
         return max
@@ -14,6 +17,7 @@ def maxlim(val, max):
         return val
 
 
+# 最小値、最大値を設定
 def minmaxlim(val, min, max):
     if val < min:
         return min
@@ -23,6 +27,7 @@ def minmaxlim(val, min, max):
         return val
 
 
+# 数値のミラーループ
 def roop(num, min, max):
     range = max - min
     n = (num - min) // range
@@ -35,6 +40,7 @@ def roop(num, min, max):
     return result
 
 
+# 矩形
 class Rect:
     left = 0
     top = 0
@@ -56,6 +62,7 @@ class Rect:
         self.size = (self.width, self.height)
 
 
+# 領域(矩形の集合)
 class Region:
     rects = []
     def __init__(self, rects):

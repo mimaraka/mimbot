@@ -1,9 +1,12 @@
 import modules.img
 import modules.funcs
-import modules.img_utils as img_utils
 import csv
+#import cv2
 import discord
+#import datetime
 import emoji
+#import librosa
+#import numpy as np
 import os
 import random
 import re
@@ -11,9 +14,11 @@ import requests
 import traceback
 from discord.ext import commands
 from PIL import Image
+from rembg import remove
 
 intents = discord.Intents.all()
 
+#Botの接頭辞を"^"にする
 bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 
 
@@ -21,6 +26,8 @@ bot = commands.Bot(command_prefix='^', intents=intents, case_insensitive=True)
 ##########################################################################
 ####    Bot Event
 ##########################################################################
+
+#起動時に動作する処理
 @bot.event
 async def on_ready():
     print('ログイン完了。')
@@ -35,7 +42,11 @@ async def on_ready():
         'Cooking Simulator',
         'FallGuys',
         'Maxon Cinema 4D',
+        'Minecraft',
+        'Nox Player',
         'REAPER',
+        'Terraria',
+        'Unrailed!',
         'Visual Studio 2022',
         'Visual Studio Code',
         'VocalShifter'
@@ -43,6 +54,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Game(random.choice(game_list)))
 
 
+#エラー発生時に動作する処理
 @bot.event
 async def on_command_error(ctx, error):
     orig_error = getattr(error, "original", error)
@@ -50,16 +62,73 @@ async def on_command_error(ctx, error):
     await ctx.send('```' + error_msg + '```')
 
 
+#メッセージ受信時に動作する処理
 @bot.event
 async def on_message(ctx):
     await bot.process_commands(ctx)
+    # 言葉狩り機能
     await modules.funcs.kotobagari_proc(ctx)
+
+
+# @bot.event
+# async def on_interaction(interaction):
+#     await modules.funcs.send_uma(interaction.channel, interaction.user)
 
 
 
 ##########################################################################
 ####    Bot Command
 ##########################################################################
+
+# @bot.command()
+# async def bpm(ctx):
+#     duration = 30
+#     x_sr = 200
+#     bpm_min, bpm_max = 60, 240
+
+#     if ctx.message.reference is None:
+#         await ctx.reply('適用したい音声ファイルが添付されたメッセージに返信してください', mention_author=False)
+#         return
+
+#     mes = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+
+#     if mes.attachments[0] is None:
+#         await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
+#         return
+
+#     file_name = mes.attachments[0].filename
+
+#     await mes.attachments[0].save(file_name)
+
+#     mes_pros = await ctx.reply('処理中です…', mention_author=False)
+
+#     # 楽曲の信号を読み込む
+#     y, sr = librosa.load(file_name, offset=38, duration=duration, mono=True)
+
+#     # ビート検出用信号の生成
+#     # リサンプリング & パワー信号の抽出
+#     x = np.abs(librosa.resample(y, sr, x_sr)) ** 2
+#     x_len = len(x)
+
+#     # 各BPMに対応する複素正弦波行列を生成
+#     M = np.zeros((bpm_max, x_len), dtype=np.complex)
+#     for bpm in range(bpm_min, bpm_max): 
+#         thete = 2 * np.pi * (bpm/60) * (np.arange(0, x_len) / x_sr)
+#         M[bpm] = np.exp(-1j * thete)
+
+#     # 各BPMとのマッチング度合い計算
+#     #（複素正弦波行列とビート検出用信号との内積）
+#     x_bpm = np.abs(np.dot(M, x))
+
+#     # BPM値を算出
+#     bpm = np.argmax(x_bpm)
+
+#     await mes_pros.delete()
+#     await ctx.send(f'BPM: {bpm}')
+#     os.remove(file_name)
+
+
+# 画像に各種エフェクトをかける
 @bot.command(aliases=['fx', 'effects'])
 async def effect(ctx, *args):
     if args:
@@ -92,6 +161,7 @@ async def effect(ctx, *args):
         m_img = modules.img.Mimbot_Image()
         m_img.load(filename_input)
 
+        # ブラー
         if fxname in ['blur', 'bl']:
             if m_img.blur(values):
                 embed = discord.Embed(
@@ -107,6 +177,7 @@ async def effect(ctx, *args):
                 await ctx.send(embed = embed)
                 return
 
+        # 変形
         elif fxname in ['dist', 'distort', 'distortion']:
             if m_img.distort(values):
                 embed = discord.Embed(
@@ -118,21 +189,26 @@ async def effect(ctx, *args):
                 await ctx.send(embed = embed)
                 return
 
+        # エンボス
         elif fxname == 'emboss':
             m_img.emboss()
 
+        # モザイク
         elif fxname == 'mosaic':
-            size = values[0] if values else 20
+            size = int(values[0]) if values else 20
             m_img.mosaic(size)
 
+        # ネガポジ反転
         elif fxname in ['negative', 'nega']:
             m_img.negative()
 
+        # Pixelize
         elif fxname == 'pixelize':
-            size = values[0] if values else 20
+            size = int(values[0]) if values else 20
             m_img.pixelize(size)
 
         if not m_img.image is None:
+            #cv2.imwrite('temp_output.png',img_result)
             m_img.image.save(filename_output)
 
         await ctx.send(file=discord.File(filename_output))
@@ -142,6 +218,7 @@ async def effect(ctx, *args):
                 os.remove(filename)
 
 
+# 言葉狩り機能のオンオフ
 @bot.command(aliases=['ktbgr'])
 async def kotobagari(ctx, *arg):
     if arg:
@@ -164,6 +241,7 @@ async def kotobagari(ctx, *arg):
             writer.writerow(channel_id_list)
 
 
+# クワガタ
 @bot.command(aliases=['kwgt'])
 async def kuwagata(ctx, *args):
     async def send_kuwagata(text):
@@ -176,13 +254,16 @@ async def kuwagata(ctx, *args):
         await send_kuwagata(el)
 
 
+# クワガタ(画像)
 @bot.command(aliases=['kwgt_img'])
 async def kuwagata_img(ctx, *args):
     async def send_kuwagata_img(text):
         filename_output = f'data/temp/temp_output_{ctx.channel.id}.png'
         m_img = modules.img.Mimbot_Image()
         m_img.load('data/assets/kuwagata_base.png')
+        # 〇〇さん
         m_img.drawtext(f'{ctx.author.display_name}さん', (579, 22), fill='black', anchor='rt', fontsize=24, direction='ttb')
+        # 〇〇～
         str_kuwagata = f'{text}～'
         lines = []
         line = ''
@@ -197,6 +278,7 @@ async def kuwagata_img(ctx, *args):
             m_img.drawtext(l, (283 - i * 32, 18), fill='black', anchor='rt', fontsize=28, direction='ttb')
 
         if not m_img.image is None:
+            #cv2.imwrite('temp_output.png',img_result)
             m_img.image.save(filename_output)
         await ctx.send(file=discord.File(filename_output))
         if os.path.isfile(filename_output):
@@ -210,6 +292,7 @@ async def kuwagata_img(ctx, *args):
             await send_kuwagata_img(el)
 
 
+# okuri
 @bot.command()
 async def okuri(ctx, *arg):
     if arg:
@@ -224,16 +307,21 @@ async def okuri(ctx, *arg):
     await ctx.send(f'おくりさんどれだけ{text[0]}{text[1]}{text[2]}')
 
 
+# ping
 @bot.command()
 async def ping(ctx):
+    # Ping値を秒単位で取得
     raw_ping = bot.latency
+    # ミリ秒に変換して丸める
     ping = round(raw_ping * 1000, 2)
     await ctx.reply(f"Pong! (Latency : {ping}[ms])", mention_author=False)
 
 
+# raika
 @bot.command(aliases=['aaruaika'])
 async def raika(ctx, *arg):
     raika_tweets = []
+    # CSVファイルから読み込み
     with open('data/csv/raika_tweets.csv') as f:
         reader = csv.reader(f, lineterminator='\n')
         for row in reader:
@@ -246,6 +334,7 @@ async def raika(ctx, *arg):
             await ctx.send(tw)
 
 
+# 背景を除去(RemoveBG)
 @bot.command()
 async def removebg(ctx):
     removebg_apikey = os.getenv('REMOVEBG_APIKEY')
@@ -257,6 +346,7 @@ async def removebg(ctx):
         return
 
     async with ctx.typing():
+        #RemoveBgAPI
         response = requests.post(
             'https://api.remove.bg/v1.0/removebg',
             files={'image_file': open(filename_input, 'rb')},
@@ -275,17 +365,43 @@ async def removebg(ctx):
             await ctx.send(f'```Error:{response.status_code} {response.text}```')
 
 
+# rembg
+@bot.command()
+async def removebg2(ctx):
+    filename_input = f'data/temp/temp_input_{ctx.channel.id}.png'
+    filename_output = f'data/temp/temp_output_{ctx.channel.id}.png'
+
+    if not await modules.funcs.attachments_proc(ctx, filename_input, 'image'):
+        return
+    
+    async with ctx.typing():
+        image = Image.open(filename_input)
+        image_output = remove(image)
+        image_output.save(filename_output)
+        await ctx.send(file=discord.File(filename_output))
+        
+        for filename in [filename_input, filename_output]:
+            if os.path.isfile(filename):
+                os.remove(filename)
+
+
+
+# 墓
 @bot.command(aliases=['grave'])
 async def tomb(ctx, *args):
     def contains_emoji(string):
+        # オリジナルの絵文字を含む場合
         if re.search(r'<:.+:\d+:>', string):
+
             result = ['dslfajdlkj', '<:asdfa:234234:>', 'kdlsjf']
             return 
+        # デフォルトの絵文字を含む場合
         for chat in string:
             if char in emoji.UNICODE_EMOJI:
                 return True
     if args:
         for content in args:
+            # 出力文字数を2000字以内に収める
             if len(content) > 279:
                 content = content[:279]
             
@@ -294,6 +410,7 @@ async def tomb(ctx, *args):
             else:
                 hasemoji = False
             result = f'{content}のお墓\n\n　　  ＿＿\n　　｜　｜\n'
+            # 半角英数字記号スペースを全角に変換
             content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(' ', '　')
             for char in content:
                 # 
@@ -309,207 +426,39 @@ async def tomb(ctx, *args):
             await ctx.send(result)
 
 
+# ウマ娘ガチャシミュレーター
 @bot.command()
-async def uma(ctx):
-    class Chara:
-        id = 0
-        rarity = 0
-        is_pickup = 0
+async def uma(ctx, *args):
+    try:
+        if len(args) > 2:
+            custom_weights = [int(i) for i in args[:3]]
+            weights_sum = sum(custom_weights)
+            custom_weights = [i / weights_sum * 100 for i in custom_weights]
+        else:
+            custom_weights = None
+    except:
+        custom_weights = None
+    await modules.funcs.send_uma(ctx.channel, ctx.author, custom_weights)
 
-        def __init__(self, id, rarity, is_pickup):
-            self.id = id
-            self.rarity = rarity
-            self.is_pickup = is_pickup
 
-    class Gacha_Usage:
-        user = ''
-        chara_id_list = []
-        exchange_point = 0
+#ワードウルフ
+# @bot.command()
+# async def wordwolf(ctx, *args):
+#     if args:
+#         if args[0] == "start":
+#             await ctx.send("只今からワードウルフを開始します。")
+#         if args[0] == "vote":
+#             return
+#     else:
+#         await ctx.send("ゲームマスターは:regional_indicator_g:のスタンプ、その他の参加者は:regional_indicator_p:のスタンプのリアクションをしてください。")
 
-        def __init__(self, user, ids, exchange_point):
-            self.user = user
-            self.chara_id_list = ids
-            self.exchange_point = exchange_point
-    
-    chara_list = []
-    usage_list = []
-    path_uma_gacha = 'data/assets/uma_gacha'
-    path_output = f'data/temp/uma_gacha_{ctx.channel.id}.png'
-    fontsize = 32
-    region_particle = img_utils.Region([img_utils.Rect(0, 30, 32, 236), img_utils.Rect(32, 30, 207, 56), img_utils.Rect(207, 30, 240, 236)])
 
-    async with ctx.typing():
-        with open('data/csv/uma_chara_info.csv') as f:
-            reader = csv.reader(f)
-            for row in reader:
-                chara = Chara(int(row[0]), int(row[1]), int(row[2]))
-                chara_list.append(chara)
 
-        with open('data/csv/uma_gacha_usage.csv') as f:
-            reader = csv.reader(f)
-            for row in reader:
-                u = Gacha_Usage(int(row[0]), [int(s) for s in row[1].split('/')], int(row[2]))
-                usage_list.append(u)
-
-        chara_id_list = []
-        exchange_point = 0
-        for i, u in enumerate(usage_list):
-            if ctx.author.id == u.user:
-                chara_id_list = u.chara_id_list
-                exchange_point = u.exchange_point
-                usage_list.pop(i)
-            
-
-        weights = [79, 18, 3]
-        weights_10 = [0, 97, 3]
-        
-        m_img = modules.img.Mimbot_Image()
-        m_img.load(f'{path_uma_gacha}/textures/bg.png')
-
-        for i in range(10):
-            w = weights if i < 9 else weights_10
-
-            chara_results_by_rarity = []
-
-            chara_results_by_rarity.append(random.choice([ch for ch in chara_list if ch.rarity == 1]))
-
-            for r in range(2, 4):
-                list_pickup = [ch for ch in chara_list if ch.rarity == r and ch.is_pickup]
-                list_not_pickup = [ch for ch in chara_list if ch.rarity == r and not ch.is_pickup]
-                prob_pickup = 0.75 if r == 3 else 2.25
-                if len(list_pickup):
-                    chara_results_by_pickup = random.choices(
-                        [list_pickup, list_not_pickup],
-                        weights=[
-                            len(list_pickup) * prob_pickup,
-                            w[r - 1] - len(list_pickup) * prob_pickup
-                        ]
-                        )[0]
-                    chara_results_by_rarity.append(random.choice(chara_results_by_pickup))
-                else:
-                    chara_results_by_rarity.append(random.choice([ch for ch in chara_list if ch.rarity == r]))
-
-            chara_result = random.choices(chara_results_by_rarity, weights=w)[0]
-
-            chara_icon = Image.open(f'{path_uma_gacha}/textures/chara_icon/{chara_result.id}.png')
-
-            x = 0
-            y = 0
-            if i % 5 < 3:
-                x = 96 + 324 * (i % 5)
-                y = 157 + 724 * (i // 5)
-            else:
-                x = 258 + 324 * (i % 5 - 3)
-                y = 519 + 724 * (i // 5)
-
-            m_img.composit(chara_icon, (x, y))
-
-            piece_x = 0
-            bonus_x = 0
-            num_piece = 0
-            num_megami = 0
-            text_piece_x = 0
-            
-            if chara_result.rarity == 3:
-                num_megami = 20
-                if chara_result.is_pickup:
-                    num_piece = 90
-                else:
-                    num_piece = 60
-            elif chara_result.rarity == 2:
-                num_megami = 3
-                num_piece = 10
-            else:
-                num_megami = 1
-                num_piece = 5
-
-            if chara_result.id in chara_id_list:
-                adjust_x = -11 if chara_result.rarity == 2 else 0
-                megami = Image.open(f'{path_uma_gacha}/textures/icon_megami.png')
-                megami_x = 4 if chara_result.rarity == 3 else 26
-                m_img.composit(megami, (x + megami_x + adjust_x, y + 300))
-
-                piece_x = 130 + adjust_x
-                bonus_x = 134 + adjust_x
-                text_piece_x = 182 + adjust_x
-
-                text_megami_x = 54 if chara_result.rarity == 3 else 76
-                m_img.drawtext(f'x{num_megami}', (x + text_megami_x + adjust_x, y + 311), fill=(124, 63, 18), anchor='lt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize, stroke_width=2, stroke_fill='white')
-
-            else:
-                chara_id_list.append(chara_result.id)
-                label_new = Image.open(f'{path_uma_gacha}/textures/label_new.png')
-                m_img.composit(label_new, (x - 22, y))
-
-                adjust_x = 11 if chara_result.rarity == 1 else 0
-
-                piece_x = 65 + adjust_x
-                text_piece_x = 117 + adjust_x
-                bonus_x = 68 + adjust_x
-
-            m_img.drawtext(f'x{num_piece}', (x + text_piece_x, y + 311), fill=(124, 63, 18), anchor='lt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize, stroke_width=2, stroke_fill='white')
-
-            piece = Image.open(f'{path_uma_gacha}/textures/piece_icon/{chara_result.id}.png')
-            m_img.composit(piece, (x + piece_x, y + 300))
-
-            label_bonus = Image.open(f'{path_uma_gacha}/textures/label_bonus.png')
-            m_img.composit(label_bonus, (x + bonus_x, y + 286))
-
-            if chara_result.rarity == 3:
-                frame = Image.open(f'{path_uma_gacha}/textures/frame.png')
-                m_img.composit(frame, (x - 8, y))
-
-            if chara_result.rarity > 1:
-                num_stars = 7 if chara_result.rarity == 3 else 5
-                particle = Image.open(f'{path_uma_gacha}/textures/particle_{chara_result.rarity}.png')
-                particle_pos = None
-                for _ in range(num_stars):
-                    scale = random.uniform(1, 3)
-                    particle_resize = particle.resize((int(particle.width // scale) ,int(particle.height // scale)))
-                    particle_pos = region_particle.randompos()
-                    m_img.composit(particle_resize, (x - (particle_resize.width // 2) + particle_pos[0], y - (particle_resize.height // 2) + particle_pos[1]))
-
-            stars = Image.open(f'{path_uma_gacha}/textures/stars_{chara_result.rarity}.png')
-            m_img.composit(stars, (x + 46, y + 243))
-
-        m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor='rt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize)
-        exchange_point += 10
-        m_img.drawtext(str(exchange_point), (860, 1611), fill=(255, 145, 21), anchor='rt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize)
-
-        m_img.write(path_output)
-        gacha_result_image = discord.File(path_output)
-        
-        class Button_Uma(discord.ui.Button):
-            async def callback(self, interaction):
-                response = interaction.response
-                await response.edit_message(view=None)
-                context = ctx
-                context.author = interaction.user
-                await uma(context)
-
-        button = Button_Uma(style=discord.ButtonStyle.success, label='もう一回引く')
-
-        view = discord.ui.View()
-        view.timeout = None
-        view.add_item(button)
-
-        await ctx.send(content=f'<@{ctx.author.id}>', file=gacha_result_image, view=view)
-
-    if os.path.isfile(path_output):
-        os.remove(path_output)
-
-    usage = Gacha_Usage(ctx.author.id, chara_id_list, exchange_point)
-    usage_list.append(usage)
-
-    with open('data/csv/uma_gacha_usage.csv', 'w') as f:
-        writer = csv.writer(f)
-        for u in usage_list:
-            writer.writerow([u.user, '/'.join([str(n) for n in u.chara_id_list]), u.exchange_point])
-
-            
 
 ##########################################################################
 ####    Run
 ##########################################################################
+
+# Botの起動とDiscordサーバーへの接続
 token = os.getenv('DISCORD_BOT_TOKEN')
 bot.run(token)

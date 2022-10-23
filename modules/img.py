@@ -13,6 +13,7 @@ class Mimbot_Image:
     def write(self, path):
         self.image.save(path)
     
+    # ブラー
     def blur(self, values):
         if not values:
             return True
@@ -41,7 +42,9 @@ class Mimbot_Image:
         return False
 
 
+    # 画像を変形
     def distort(self, values):
+        # 波状に変形(波形ワープ)
         def wave(amp, freq, hor):
             width, height = self.image.size
             h1 = 0
@@ -57,16 +60,22 @@ class Mimbot_Image:
 
             result = Image.new('RGB',self.image.size)
 
+            #OpenCVはsizeではなくshape
             if len(values) > 3 and values[3] in ['hor', 'horizontal']:
                 for y in range(self.image.size[1]):
                     for x in range(self.image.size[0]):
+                        #for i in range(3):
+                            #result[y, x][i] = img[y, roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, img.shape[1] - 1)][i]
                         result.putpixel((x, y), tuple(self.image.getpixel((img_utils.roop(x + math.floor(amp * math.sin(y * freq / h2)), 0, self.image.size[0] - 1), y))))
             else:
                 for y in range(self.image.size[1]):
                     for x in range(self.image.size[0]):
+                        #for i in range(3):
+                            #result[y, x][i] = img[roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, img.shape[0] - 1), x][i]
                         result.putpixel((x, y), tuple(self.image.getpixel((x, img_utils.roop(y + math.floor(amp * math.sin(x * freq / h2)), 0, self.image.size[1] - 1)))))
             self.image = result
 
+        # 渦状に変形
         def swirl(rot):
             return
         
@@ -82,10 +91,12 @@ class Mimbot_Image:
         return False
 
 
+    # エンボス
     def emboss(self):
         self.image = self.image.filter(ImageFilter.EMBOSS)
 
 
+    # モザイク
     def mosaic(self, size=20):
         result = Image.new('RGB',self.image.size)
         tmp = np.zeros(((self.image.size[0] - 1)//size + 1, (self.image.size[1] - 1)//size + 1, 3), dtype = int)
@@ -102,6 +113,7 @@ class Mimbot_Image:
         self.image = result
 
 
+    # 画像のネガポジを反転
     def negative(self):
         result = Image.new('RGB',self.image.size)
         for y in range(self.image.size[1]):
@@ -114,6 +126,7 @@ class Mimbot_Image:
         self.image = result
 
 
+    # ドット絵風
     def pixelize(self, size=20):
         result = Image.new('RGB',self.image.size)
         for y in range(self.image.size[1]):
@@ -124,6 +137,7 @@ class Mimbot_Image:
         self.image = result
 
 
+    # テキストを追加
     def drawtext(self, text, pos, fill='white', anchor='mm', fontpath='.fonts/meiryo.ttf' , fontsize=24, direction='rtl', stroke_width=0, stroke_fill='black'):
         font = ImageFont.truetype(fontpath, fontsize)
 
@@ -131,6 +145,7 @@ class Mimbot_Image:
         draw.text(pos, text, fill=fill, font=font, anchor=anchor, direction=direction, stroke_width=stroke_width, stroke_fill=stroke_fill)
 
 
+    # コンポジット(透過画像対応)
     def composit(self, img, position):
         bg_clear = Image.new("RGBA", self.image.size, (255, 255, 255, 0))
         bg_clear.paste(img, position)
