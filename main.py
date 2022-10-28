@@ -441,19 +441,6 @@ async def uma(ctx, *args):
     await modules.funcs.send_uma(ctx.channel, ctx.author, custom_weights)
 
 
-#ワードウルフ
-# @bot.command()
-# async def wordwolf(ctx, *args):
-#     if args:
-#         if args[0] == "start":
-#             await ctx.send("只今からワードウルフを開始します。")
-#         if args[0] == "vote":
-#             return
-#     else:
-#         await ctx.send("ゲームマスターは:regional_indicator_g:のスタンプ、その他の参加者は:regional_indicator_p:のスタンプのリアクションをしてください。")
-
-
-
 
 ##########################################################################
 ####    Run
