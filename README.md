@@ -1,5 +1,5 @@
 # mimbot
-[ギラティナ](https://github.com/SehataKuro/Giratina)の下位互換です。  
+[ギラティナ](https://github.com/Giratina-net/Giratina)の下位互換です。  
 くだらないコマンドが沢山あります。  
 
 ## コマンド一覧
