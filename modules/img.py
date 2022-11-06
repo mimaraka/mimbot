@@ -17,24 +17,24 @@ class Mimbot_Image:
     def blur(self, values):
         if not values:
             return True
-        elif values[0] == 'box':
+        elif values[0] == "box":
             radius = values[1] if len(values) > 2 else 10
             self.image = self.image.filter(ImageFilter.BoxBlur(radius=radius))
-        elif values[0] == 'gaussian':
+        elif values[0] == "gaussian":
             radius = values[1] if len(values) > 2 else 10
             self.image = self.image.filter(ImageFilter.GaussianBlur(radius=radius))
-        elif values[0] == 'median':
+        elif values[0] == "median":
             size = values[1] if len(values) > 2 else 10
             self.image = self.image.filter(ImageFilter.MedianFilter(size=size))
-        elif values[0] in ['maximum', 'max']:
+        elif values[0] in ["maximum", "max"]:
             size = values[1] if len(values) > 2 else 10
             self.image = self.image.filter(ImageFilter.MaxFilter(size=size))
-        elif values[0] in ['minimum', 'min']:
+        elif values[0] in ["minimum", "min"]:
             size = values[1] if len(values) > 2 else 10
             self.image = self.image.filter(ImageFilter.MinFilter(size=size))
-        elif values[0] == 'radius':
+        elif values[0] == "radius":
             return False
-        elif values[0] == 'rank':
+        elif values[0] == "rank":
             size = values[1] if len(values) > 2 else 10
             rank = values[2] if len(values) > 3 else 5
             self.image = self.image.filter(ImageFilter.RankFilter(size=size, rank=rank))
@@ -58,10 +58,10 @@ class Mimbot_Image:
 
             amp = amp / 100 * h1
 
-            result = Image.new('RGB',self.image.size)
+            result = Image.new("RGB",self.image.size)
 
             #OpenCVはsizeではなくshape
-            if len(values) > 3 and values[3] in ['hor', 'horizontal']:
+            if len(values) > 3 and values[3] in ["hor", "horizontal"]:
                 for y in range(self.image.size[1]):
                     for x in range(self.image.size[0]):
                         #for i in range(3):
@@ -81,8 +81,8 @@ class Mimbot_Image:
         
         if not values:
             return True
-        elif values[0] in ['wav', 'wave']:
-            if len(values) > 3 and values[3] in ['horizontal', 'hor']:
+        elif values[0] in ["wav", "wave"]:
+            if len(values) > 3 and values[3] in ["horizontal", "hor"]:
                 hor = 1
             else:
                 hor = 0
@@ -98,7 +98,7 @@ class Mimbot_Image:
 
     # モザイク
     def mosaic(self, size=20):
-        result = Image.new('RGB',self.image.size)
+        result = Image.new("RGB",self.image.size)
         tmp = np.zeros(((self.image.size[0] - 1)//size + 1, (self.image.size[1] - 1)//size + 1, 3), dtype = int)
         for y in range(self.image.size[1]):
             for x in range(self.image.size[0]):
@@ -115,7 +115,7 @@ class Mimbot_Image:
 
     # 画像のネガポジを反転
     def negative(self):
-        result = Image.new('RGB',self.image.size)
+        result = Image.new("RGB",self.image.size)
         for y in range(self.image.size[1]):
             for x in range(self.image.size[0]):
                 rgb = []
@@ -128,7 +128,7 @@ class Mimbot_Image:
 
     # ドット絵風
     def pixelize(self, size=20):
-        result = Image.new('RGB',self.image.size)
+        result = Image.new("RGB",self.image.size)
         for y in range(self.image.size[1]):
             for x in range(self.image.size[0]):
                 xx = (x//size)*size
@@ -138,7 +138,7 @@ class Mimbot_Image:
 
 
     # テキストを追加
-    def drawtext(self, text, pos, fill='white', anchor='mm', fontpath='.fonts/meiryo.ttf' , fontsize=24, direction='rtl', stroke_width=0, stroke_fill='black'):
+    def drawtext(self, text, pos, fill="white", anchor="mm", fontpath=".fonts/meiryo.ttf" , fontsize=24, direction="rtl", stroke_width=0, stroke_fill="black"):
         font = ImageFont.truetype(fontpath, fontsize)
 
         draw = ImageDraw.Draw(self.image)
