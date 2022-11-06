@@ -18,7 +18,7 @@ async def attachments_proc(ctx, filepath, media_type):
             async with aiohttp.ClientSession() as session:
                 async with session.get(url) as resp:
                     if resp.status == 200:
-                        mime = resp.headers.get('Content-type', '').lower()
+                        mime = resp.headers.get("Content-type", "").lower()
                         if any([mime == x for x in mimetypes_list]):
                             return True
                         else:
@@ -27,13 +27,13 @@ async def attachments_proc(ctx, filepath, media_type):
             return False
 
     mimetypes = {
-        'image':            ['image/png', 'image/pjpeg', 'image/jpeg', 'image/x-icon'],
-        'gif':              ['image/gif'],
-        'audio':            ['audio/wav', 'audio/mpeg', 'audio/aac', 'audio/ogg'],
-        'video':            ['video/mpeg', 'video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo']
+        "image":            ["image/png", "image/pjpeg", "image/jpeg", "image/x-icon"],
+        "gif":              ["image/gif"],
+        "audio":            ["audio/wav", "audio/mpeg", "audio/aac", "audio/ogg"],
+        "video":            ["video/mpeg", "video/mp4", "video/webm", "video/quicktime", "video/x-msvideo"]
     }
     
-    url = ''
+    url = ""
     #返信をしていた場合
     if ctx.message.reference is not None:
         message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
@@ -42,13 +42,13 @@ async def attachments_proc(ctx, filepath, media_type):
             url = message_reference.attachments[0].url
         #返信元のメッセージにファイルが添付されていなかった場合
         else:
-            await ctx.reply('返信元のメッセージにファイルが添付されていません', mention_author=False)
+            await ctx.reply("返信元のメッセージにファイルが添付されていません", mention_author=False)
             return False
     #返信をしていなかった場合
     else:
         #直近10件のメッセージの添付ファイル・URLの取得を試みる
         async for message in ctx.history(limit=10):
-            mo = re.search(r'https?://[\w/:%#\$&\?\(\)~\.=\+\-]+', message.content)
+            mo = re.search(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", message.content)
             #メッセージに添付ファイルが存在する場合
             if len(message.attachments) > 0:
                 url = message.attachments[0].url
@@ -60,7 +60,7 @@ async def attachments_proc(ctx, filepath, media_type):
                 break
         #どちらも存在しない場合
         else:
-            await ctx.reply('ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください', mention_author=False)
+            await ctx.reply("ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください", mention_author=False)
             return False
 
     # ダウンロード
@@ -71,52 +71,51 @@ async def attachments_proc(ctx, filepath, media_type):
         return True
 
 
+
 # 正規表現を用いて対象の文字列をより広く検索する
 def searchex(lis, target_text, strength):
     # re.search()に用いるパターンの用意
-    pattern = r''
+    pattern = r""
     # リストの要素を取り出す
     for i, el in enumerate(lis):
         # リストの要素の型がリストであった場合(一文字ずつリストが用意されている)
         if type(el) == list:
             # 文字ごとの正規表現(〇|〇|...)を用意
-            rchar = r''
+            rchar = r""
             # リスト内の一単語ごとにforループ
             for j, s in enumerate(el):
                 # 一文字ずつ正規表現に変換し、or記号(|)で区切る
                 # 末端処理
                 if j == len(el) - 1:
-                    rchar += r'{}'.format(s)
+                    rchar += r"{}".format(s)
                 else:
-                    rchar += r'{}'.format(s) + r'|'
+                    rchar += r"{}".format(s) + r"|"
             # 末端処理
             if i == len(lis) - 1:
-                pattern += r'(' + rchar + r')'
+                pattern += r"(" + rchar + r")"
             else:
-                pattern += r'(' + rchar + r')' + r'((\s*|᠎*)*|.{,' + r'{}'.format(strength) + r'})'
+                pattern += r"(" + rchar + r")" + r"((\s*|᠎*)*|.{," + r"{}".format(strength) + r"})"
         # リストの要素の型が文字列であった場合
         elif type(el) == str:
             # 文字列ごとの正規表現を用意
-            rstr = r''
+            rstr = r""
             # 文字列内の一文字ごとにforループ
             for j, c in enumerate(el):
                 # 末端処理
                 if j == len(el) - 1:
-                    rstr += r'{}'.format(c)
+                    rstr += r"{}".format(c)
                 else:
-                    rstr += r'{}'.format(c) + r'((\s*|᠎*)*|.{,' + r'{}'.format(strength) + r'})'
+                    rstr += r"{}".format(c) + r"((\s*|᠎*)*|.{," + r"{}".format(strength) + r"})"
             # 末端処理
             if i == len(lis) - 1:
-                pattern += r'(' + rstr + r')'
+                pattern += r"(" + rstr + r")"
             else:
-                pattern += r'(' + rstr + r')' + r'|'
+                pattern += r"(" + rstr + r")" + r"|"
         # リストの要素の型が上のいずれでもなかった場合
         else:
-            return False
-    if re.search(pattern, target_text):
-        return True
-    else:
-        return False
+            return 0
+    return re.findall(pattern, target_text)
+
 
 
 # 言葉狩り
@@ -126,34 +125,36 @@ async def kotobagari_proc(ctx):
         return
 
     channel_id_list = []
-    with open('data/csv/kotobagari.csv') as f:
+    with open("data/csv/kotobagari.csv") as f:
             reader = csv.reader(f)
             for row in reader:
                 channel_id_list = row
     
     if not str(ctx.channel.id) in channel_id_list:
-        if searchex(['あつい', 'アツい', '暑'], str(ctx.content), 1):
-            await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png')
+        for _ in searchex(["あつい", "アツい", "暑"], str(ctx.content), 1):
+            await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png")
 
-        if searchex([['お', 'オ'], ['く', 'ク'], ['り', 'リ']], str(ctx.content), 3):
-            await ctx.channel.send('おくりさんどれだけ性欲あるの')
+        for _ in searchex([["お", "オ"], ["く", "ク"], ["り", "リ"]], str(ctx.content), 3):
+            await ctx.channel.send("おくりさんどれだけ性欲あるの")
 
-        if searchex([['ご', 'ゴ'], ['き', 'キ'], ['ぶ', 'ブ'], ['り', 'リ']], str(ctx.content), 1):
-            await ctx.channel.send('フラッシュさん見て見て\nゴキブリ～')
+        for _ in searchex([["ご", "ゴ"], ["き", "キ"], ["ぶ", "ブ"], ["り", "リ"]], str(ctx.content), 1):
+            await ctx.channel.send("フラッシュさん見て見て\nゴキブリ～")
 
-        if searchex(['さかな', 'サカナ', '魚'], str(ctx.content), 1):
-            await ctx.channel.send('https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif')
+        for _ in searchex(["さかな", "サカナ", "魚"], str(ctx.content), 1):
+            await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif")
 
-        if searchex(['ひる', 'ヒル', '昼'], str(ctx.content), 1):
+        for _ in searchex(["ひる", "ヒル", "昼"], str(ctx.content), 1):
             images = [
-                'https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png',
-                'https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg'
+                "https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png",
+                "https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg"
             ]
             image_pickup = random.choice(images)
             await ctx.channel.send(image_pickup)
 
-        if searchex(['バカ', 'ゴミ', 'アホ', 'ハゲ', 'ノミ', 'ザコ', 'クソ', 'カス', 'ばか', 'ごみ', 'あほ', 'はげ', 'ざこ', 'くそ', 'かす'], str(ctx.content), 0):
-            await ctx.channel.send('ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ')
+        for _ in searchex(["バカ", "ゴミ", "アホ", "ハゲ", "ノミ", "ザコ", "クソ", "カス", "ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
+            await ctx.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
+
+
 
 async def send_uma(channel, author, custom_weights):
     class Chara:
@@ -168,7 +169,7 @@ async def send_uma(channel, author, custom_weights):
             self.is_pickup = is_pickup
 
     class Gacha_Usage:
-        user = ''
+        user = ""
         chara_id_list = []
         exchange_point = 0
 
@@ -179,24 +180,24 @@ async def send_uma(channel, author, custom_weights):
     
     chara_list = []
     usage_list = []
-    path_uma_gacha = 'data/assets/uma_gacha'
-    path_output = f'data/temp/uma_gacha_{channel.id}.png'
+    path_uma_gacha = "data/assets/uma_gacha"
+    path_output = f"data/temp/uma_gacha_{channel.id}.png"
     fontsize = 32
     region_particle = img_utils.Region([img_utils.Rect(0, 30, 32, 236), img_utils.Rect(32, 30, 207, 56), img_utils.Rect(207, 30, 240, 236)])
 
     async with channel.typing():
         # CSVファイルからキャラ情報を読み込み
-        with open('data/csv/uma_chara_info.csv') as f:
+        with open("data/csv/uma_chara_info.csv") as f:
             reader = csv.reader(f)
             for row in reader:
                 chara = Chara(int(row[0]), int(row[1]), int(row[2]))
                 chara_list.append(chara)
 
         # CSVファイルからガチャ使用情報を読み込み
-        with open('data/csv/uma_gacha_usage.csv') as f:
+        with open("data/csv/uma_gacha_usage.csv") as f:
             reader = csv.reader(f)
             for row in reader:
-                u = Gacha_Usage(int(row[0]), [int(s) for s in row[1].split('/')], int(row[2]))
+                u = Gacha_Usage(int(row[0]), [int(s) for s in row[1].split("/")], int(row[2]))
                 usage_list.append(u)
 
         # コマンド使用者がガチャ使用情報に載っているか確認
@@ -221,7 +222,7 @@ async def send_uma(channel, author, custom_weights):
         
         # 画像の初期化
         m_img = modules.img.Mimbot_Image()
-        m_img.load(f'{path_uma_gacha}/textures/bg.png')
+        m_img.load(f"{path_uma_gacha}/textures/bg.png")
 
         for i in range(10):
             w = weights if i < 9 else weights_10
@@ -258,7 +259,7 @@ async def send_uma(channel, author, custom_weights):
             chara_result = random.choices(chara_results_by_rarity, weights=w)[0]
 
             # アイコン画像をchara_iconフォルダから読み込み&貼り付け
-            chara_icon = Image.open(f'{path_uma_gacha}/textures/chara_icon/{chara_result.id}.png')
+            chara_icon = Image.open(f"{path_uma_gacha}/textures/chara_icon/{chara_result.id}.png")
 
             x = 0
             y = 0
@@ -296,7 +297,7 @@ async def send_uma(channel, author, custom_weights):
             if chara_result.id in chara_id_list:
                 adjust_x = -11 if chara_result.rarity == 2 else 0
                 # 女神像
-                megami = Image.open(f'{path_uma_gacha}/textures/icon_megami.png')
+                megami = Image.open(f"{path_uma_gacha}/textures/icon_megami.png")
                 megami_x = 4 if chara_result.rarity == 3 else 26
                 m_img.composit(megami, (x + megami_x + adjust_x, y + 300))
 
@@ -307,13 +308,13 @@ async def send_uma(channel, author, custom_weights):
 
                 # テキスト(女神像)
                 text_megami_x = 54 if chara_result.rarity == 3 else 76
-                m_img.drawtext(f'x{num_megami}', (x + text_megami_x + adjust_x, y + 311), fill=(124, 63, 18), anchor='lt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize, stroke_width=2, stroke_fill='white')
+                m_img.drawtext(f"x{num_megami}", (x + text_megami_x + adjust_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
 
             # 未獲得の場合
             else:
                 chara_id_list.append(chara_result.id)
                 # NEW!
-                label_new = Image.open(f'{path_uma_gacha}/textures/label_new.png')
+                label_new = Image.open(f"{path_uma_gacha}/textures/label_new.png")
                 m_img.composit(label_new, (x - 22, y))
 
                 adjust_x = 11 if chara_result.rarity == 1 else 0
@@ -324,25 +325,25 @@ async def send_uma(channel, author, custom_weights):
                 bonus_x = 68 + adjust_x
 
             # テキスト(ピース)
-            m_img.drawtext(f'x{num_piece}', (x + text_piece_x, y + 311), fill=(124, 63, 18), anchor='lt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize, stroke_width=2, stroke_fill='white')
+            m_img.drawtext(f"x{num_piece}", (x + text_piece_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
 
             # ピース
-            piece = Image.open(f'{path_uma_gacha}/textures/piece_icon/{chara_result.id}.png')
+            piece = Image.open(f"{path_uma_gacha}/textures/piece_icon/{chara_result.id}.png")
             m_img.composit(piece, (x + piece_x, y + 300))
 
             # おまけ
-            label_bonus = Image.open(f'{path_uma_gacha}/textures/label_bonus.png')
+            label_bonus = Image.open(f"{path_uma_gacha}/textures/label_bonus.png")
             m_img.composit(label_bonus, (x + bonus_x, y + 286))
 
             # レア度が3の場合枠を描画
             if chara_result.rarity == 3:
-                frame = Image.open(f'{path_uma_gacha}/textures/frame.png')
+                frame = Image.open(f"{path_uma_gacha}/textures/frame.png")
                 m_img.composit(frame, (x - 8, y))
 
             # パーティクルを描画
             if chara_result.rarity > 1:
                 num_stars = 7 if chara_result.rarity == 3 else 5
-                particle = Image.open(f'{path_uma_gacha}/textures/particle_{chara_result.rarity}.png')
+                particle = Image.open(f"{path_uma_gacha}/textures/particle_{chara_result.rarity}.png")
                 particle_pos = None
                 for _ in range(num_stars):
                     scale = random.uniform(1, 3)
@@ -351,13 +352,13 @@ async def send_uma(channel, author, custom_weights):
                     m_img.composit(particle_resize, (x - (particle_resize.width // 2) + particle_pos[0], y - (particle_resize.height // 2) + particle_pos[1]))
 
             # 星マークを貼り付け
-            stars = Image.open(f'{path_uma_gacha}/textures/stars_{chara_result.rarity}.png')
+            stars = Image.open(f"{path_uma_gacha}/textures/stars_{chara_result.rarity}.png")
             m_img.composit(stars, (x + 46, y + 243))
 
         # 育成ウマ娘交換ポイント書き込み
-        m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor='rt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize)
+        m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor="rt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
         exchange_point += 10
-        m_img.drawtext(str(exchange_point), (860, 1611), fill=(255, 145, 21), anchor='rt', fontpath='.fonts/rodin_wanpaku_eb.otf', fontsize=fontsize)
+        m_img.drawtext(str(exchange_point), (860, 1611), fill=(255, 145, 21), anchor="rt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
 
         # リザルト画面の保存&読み込み
         m_img.write(path_output)
@@ -370,14 +371,14 @@ async def send_uma(channel, author, custom_weights):
                 await response.edit_message(view=None)
                 await send_uma(interaction.channel, interaction.user, custom_weights)
 
-        button = Button_Uma(style=discord.ButtonStyle.success, label='もう一回引く')
+        button = Button_Uma(style=discord.ButtonStyle.success, label="もう一回引く")
 
         view = discord.ui.View()
         view.timeout = None
         view.add_item(button)
 
         # メッセージを送信
-        await channel.send(content=f'<@{author.id}>', file=gacha_result_image, view=view)
+        await channel.send(content=f"<@{author.id}>", file=gacha_result_image, view=view)
 
     # 生成した画像を削除
     if os.path.isfile(path_output):
@@ -387,7 +388,7 @@ async def send_uma(channel, author, custom_weights):
     usage = Gacha_Usage(author.id, chara_id_list, exchange_point)
     usage_list.append(usage)
 
-    with open('data/csv/uma_gacha_usage.csv', 'w') as f:
+    with open("data/csv/uma_gacha_usage.csv", "w") as f:
         writer = csv.writer(f)
         for u in usage_list:
-            writer.writerow([u.user, '/'.join([str(n) for n in u.chara_id_list]), u.exchange_point])
+            writer.writerow([u.user, "/".join([str(n) for n in u.chara_id_list]), u.exchange_point])
