@@ -151,7 +151,7 @@ async def kotobagari_proc(ctx):
             image_pickup = random.choice(images)
             await ctx.channel.send(image_pickup)
 
-        for _ in searchex(["バカ", "ゴミ", "アホ", "ハゲ", "ノミ", "ザコ", "クソ", "カス", "ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
+        if searchex(["バカ", "ゴミ", "アホ", "ハゲ", "ノミ", "ザコ", "クソ", "カス", "ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
             await ctx.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
 
 
