@@ -413,7 +413,8 @@ async def tomb(ctx, *args):
                 hasemoji = False
             result = f"{content}のお墓\n\n　　  ＿＿\n　　｜　｜\n"
             # 半角英数字記号スペースを全角に変換
-            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　")
+            # 伸ばし棒(ー)も縦に変換
+            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
             for char in content:
                 # 
                 if hasemoji:
