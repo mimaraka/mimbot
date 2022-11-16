@@ -429,6 +429,13 @@ async def tomb(ctx, *args):
             await ctx.send(result)
 
 
+
+@bot.command()
+async def debug(ctx, *args):
+    await ctx.send('```' + args[0] + '```')
+
+
+
 # ウマ娘ガチャシミュレーター
 @bot.command()
 async def uma(ctx, *args):
