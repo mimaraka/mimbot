@@ -406,7 +406,7 @@ async def tomb(ctx, *args):
         for content in args:
             # 出力文字数を2000字以内に収める
             if len(content) > 279:
-                content = content[:279]
+                content = content[:279].replace("\n", "")
 
             has_emoji = False
             tomb_top = "　　   ＿＿"
@@ -437,7 +437,7 @@ async def tomb(ctx, *args):
                 else:
                     add = f"{tomb_left}{char}{tomb_right}\n"
                 result += add
-            result += f"{tomb_left}{tomb_blank}{tomb_right}\n" + tomb_bottom
+            result += f"{tomb_left}{tomb_blank}{tomb_right}\n{tomb_bottom}"
             await ctx.send(result)
 
 
