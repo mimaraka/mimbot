@@ -411,7 +411,7 @@ async def tomb(ctx, *args):
                 hasemoji = True
             else:
                 hasemoji = False
-            result = f"{content}のお墓\n\n　　  ＿＿\n　　｜　｜\n"
+            result = f"{content}のお墓\n\n　　   ＿＿\n　　 ｜　｜\n"
             # 半角英数字記号スペースを全角に変換
             # 伸ばし棒(ー)も縦に変換
             content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
@@ -419,11 +419,11 @@ async def tomb(ctx, *args):
                 # 
                 if hasemoji:
                     if emoji.is_emoji(char):
-                        add = f"　　｜{char}｜\n"
+                        add = f"　　 ｜{char}｜\n"
                     else:
-                        add = f"　　｜ {char} ｜\n"
+                        add = f"　　 ｜ {char} ｜\n"
                 else:
-                    add = f"　　｜{char}｜\n"
+                    add = f"　　 ｜{char}｜\n"
                 result += add
             result += "　　｜　｜\n　|￣￣￣￣￣|\n　|　 |三三|　 |"
             await ctx.send(result)
@@ -433,6 +433,11 @@ async def tomb(ctx, *args):
 @bot.command()
 async def debug(ctx, *args):
     await ctx.send('```' + args[0] + '```')
+
+    
+@bot.command()
+async def isemoji(ctx, *args):
+    await ctx.send(emoji.is_emoji(args[0]))
 
 
 
