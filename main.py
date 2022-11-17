@@ -413,15 +413,18 @@ async def tomb(ctx, *args):
             tomb_left = ""
             tomb_right = "｜"
             tomb_bottom = "　|￣￣￣￣￣|\n　|　 |三三|　 |"
+            tomb_blank = ""
 
             if emoji.emoji_count(content) > 0:
                 has_emoji = True
                 tomb_left = "　　｜"
+                tomb_blank = " 　 "
             else:
                 has_emoji = False
                 tomb_left = "　　 ｜"
+                tomb_blank = "　"
                 
-            result = f"{content}のお墓\n\n{tomb_top}\n{tomb_left}　{tomb_right}\n"
+            result = f"{content}のお墓\n\n{tomb_top}\n{tomb_left}{tomb_blank}{tomb_right}\n"
             # 半角英数字記号スペースを全角に変換
             # 伸ばし棒(ー)も縦に変換
             content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
@@ -434,7 +437,7 @@ async def tomb(ctx, *args):
                 else:
                     add = f"{tomb_left}{char}{tomb_right}\n"
                 result += add
-            result += f"{tomb_left}　{tomb_right}\n" + tomb_bottom
+            result += f"{tomb_left}{tomb_blank}{tomb_right}\n" + tomb_bottom
             await ctx.send(result)
 
 
