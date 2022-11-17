@@ -401,6 +401,7 @@ async def tomb(ctx, *args):
         for chat in string:
             if char in emoji.UNICODE_EMOJI:
                 return True
+    
     if args:
         for content in args:
             # 出力文字数を2000字以内に収める
@@ -408,26 +409,32 @@ async def tomb(ctx, *args):
                 content = content[:279]
 
             has_emoji = False
-            
+            tomb_top = "　　   ＿＿"
+            tomb_left = ""
+            tomb_right = "｜"
+            tomb_bottom = "　|￣￣￣￣￣|\n　|　 |三三|　 |"
+
             if emoji.emoji_count(content) > 0:
                 has_emoji = True
+                tomb_left = "　　｜"
             else:
                 has_emoji = False
-
-            result = f"{content}のお墓\n\n　　   ＿＿\n　　 ｜　｜\n"
+                tomb_left = "　　 ｜"
+                
+            result = f"{content}のお墓\n\n{tomb_top}\n{tomb_left}　{tomb_right}\n"
             # 半角英数字記号スペースを全角に変換
             # 伸ばし棒(ー)も縦に変換
             content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
             for char in content:
                 if has_emoji:
                     if emoji.is_emoji(char):
-                        add = f"　　 ｜{char}｜\n"
+                        add = f"{tomb_left}{char}{tomb_right}\n"
                     else:
-                        add = f"　　 ｜ {char} ｜\n"
+                        add = f"{tomb_left} {char} {tomb_right}\n"
                 else:
-                    add = f"　　 ｜{char}｜\n"
+                    add = f"{tomb_left}{char}{tomb_right}\n"
                 result += add
-            result += "　　｜　｜\n　|￣￣￣￣￣|\n　|　 |三三|　 |"
+            result += f"{tomb_left}　{tomb_right}\n" + tomb_bottom
             await ctx.send(result)
 
 
