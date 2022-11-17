@@ -434,10 +434,11 @@ async def tomb(ctx, *args):
 async def debug(ctx, *args):
     await ctx.send('```' + args[0] + '```')
 
-    
+
 @bot.command()
 async def isemoji(ctx, *args):
     await ctx.send(emoji.is_emoji(args[0]))
+    await ctx.send(emoji.emoji_count(args[0]))
 
 
 
