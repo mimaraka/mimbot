@@ -34,6 +34,7 @@ async def on_ready():
     game_list = [
         "Adobe After Effects 2022",
         "Adobe Photoshop 2022",
+        "Adobe Premire Pro 2022",
         "Adobe Illustrator 2022",
         "AviUtl",
         "Blender",
@@ -427,7 +428,7 @@ async def tomb(ctx, *args):
             result = f"{content}のお墓\n\n{tomb_top}\n{tomb_left}{tomb_blank}{tomb_right}\n"
             # 半角英数字記号スペースを全角に変換
             # 伸ばし棒(ー)も縦に変換
-            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
+            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜").replace("\n", "")
             for char in content:
                 if has_emoji:
                     if emoji.is_emoji(char):
