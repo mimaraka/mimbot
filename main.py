@@ -406,8 +406,9 @@ async def tomb(ctx, *args):
     if args:
         for content in args:
             # 出力文字数を2000字以内に収める
+            content = content.replace("\n", "")
             if len(content) > 279:
-                content = content[:279].replace("\n", "")
+                content = content[:279]
 
             has_emoji = False
             tomb_top = "　　   ＿＿"
@@ -428,7 +429,7 @@ async def tomb(ctx, *args):
             result = f"{content}のお墓\n\n{tomb_top}\n{tomb_left}{tomb_blank}{tomb_right}\n"
             # 半角英数字記号スペースを全角に変換
             # 伸ばし棒(ー)も縦に変換
-            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜").replace("\n", "")
+            content = content.translate(str.maketrans({chr(0x0021 + i): chr(0xFF01 + i) for i in range(94)})).replace(" ", "　").replace("ー", "｜")
             for char in content:
                 if has_emoji:
                     if emoji.is_emoji(char):
