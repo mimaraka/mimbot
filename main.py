@@ -227,7 +227,7 @@ async def kotobagari(ctx, *arg):
     if arg:
         kotoba_onoff = arg[0]
         channel_id_list = []
-        with open("data/kotobagari.csv") as f:
+        with open("data/csv/kotobagari.csv") as f:
             reader = csv.reader(f)
             for row in reader:
                 channel_id_list = row
@@ -239,7 +239,7 @@ async def kotobagari(ctx, *arg):
             channel_id_list.append(str(ctx.channel.id))
             await ctx.send("このチャンネルの言葉狩り機能を一時的にオフにしました。")
         
-        with open("data/kotobagari.csv", "w") as f:
+        with open("data/csv/kotobagari.csv", "w") as f:
             writer = csv.writer(f)
             writer.writerow(channel_id_list)
 
