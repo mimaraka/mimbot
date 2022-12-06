@@ -3,6 +3,7 @@ import modules.img
 import aiohttp
 import csv
 import discord
+import jaconv
 import os
 import random
 import re
@@ -114,7 +115,7 @@ def searchex(lis, target_text, strength):
         # リストの要素の型が上のいずれでもなかった場合
         else:
             return 0
-    return re.findall(pattern, target_text)
+    return re.findall(pattern, jaconv.kata2hira(target_text))
 
 
 
@@ -131,19 +132,24 @@ async def kotobagari_proc(ctx):
                 channel_id_list = row
     
     if not str(ctx.channel.id) in channel_id_list:
-        for _ in searchex(["あつい", "アツい", "暑"], str(ctx.content), 1):
+        for _ in searchex(["あつい", "暑"], str(ctx.content), 1):
             await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png")
 
-        for _ in searchex([["お", "オ"], ["く", "ク"], ["り", "リ"]], str(ctx.content), 3):
-            await ctx.channel.send("おくりさんどれだけ性欲あるの")
+        for _ in searchex(["おくり"], str(ctx.content), 3):
+            text = ""
+            if random.randrange(0, 100) == 0:
+                text = "君は優しくおくりへと誘う"
+            else:
+                text = "おくりさんどれだけ性欲あるの"
+            await ctx.channel.send(text)
 
-        for _ in searchex([["ご", "ゴ"], ["き", "キ"], ["ぶ", "ブ"], ["り", "リ"]], str(ctx.content), 1):
+        for _ in searchex(["ごきぶり"], str(ctx.content), 1):
             await ctx.channel.send("フラッシュさん見て見て\nゴキブリ～")
 
-        for _ in searchex(["さかな", "サカナ", "魚"], str(ctx.content), 1):
+        for _ in searchex(["さかな", "魚"], str(ctx.content), 1):
             await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif")
 
-        for _ in searchex(["ひる", "ヒル", "昼"], str(ctx.content), 1):
+        for _ in searchex(["ひる", "昼"], str(ctx.content), 1):
             images = [
                 "https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png",
                 "https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg"
@@ -151,7 +157,7 @@ async def kotobagari_proc(ctx):
             image_pickup = random.choice(images)
             await ctx.channel.send(image_pickup)
 
-        if searchex(["バカ", "ゴミ", "アホ", "ハゲ", "ノミ", "ザコ", "クソ", "カス", "ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
+        if searchex(["ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
             await ctx.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
 
 
