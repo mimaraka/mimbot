@@ -371,8 +371,8 @@ async def removebg(ctx):
 # rembg
 @bot.command()
 async def removebg2(ctx):
-    filename_input = f"data/temp/temp_input_{ctx.channel.id}.png"
-    filename_output = f"data/temp/temp_output_{ctx.channel.id}.png"
+    filename_input = f"data/temp/removebg2_i_{ctx.channel.id}.png"
+    filename_output = f"data/temp/removebg2_o_{ctx.channel.id}.png"
 
     if not await modules.funcs.attachments_proc(ctx, filename_input, "image"):
         return
@@ -445,18 +445,6 @@ async def tomb(ctx, *args):
                     content = content[:-1]
     
             await ctx.send(result)
-
-
-
-@bot.command()
-async def debug(ctx, *args):
-    await ctx.send('```' + args[0] + '```')
-
-
-@bot.command()
-async def isemoji(ctx, *args):
-    await ctx.send(emoji.is_emoji(args[0]))
-    await ctx.send(emoji.emoji_count(args[0]))
 
 
 

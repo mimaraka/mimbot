@@ -203,6 +203,8 @@ async def send_uma(channel, author, custom_weights):
         with open("data/csv/uma_gacha_usage.csv") as f:
             reader = csv.reader(f)
             for row in reader:
+                if len(row) == 0:
+                    break
                 u = Gacha_Usage(int(row[0]), [int(s) for s in row[1].split("/")], int(row[2]))
                 usage_list.append(u)
 
