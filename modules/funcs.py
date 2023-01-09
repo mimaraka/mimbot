@@ -12,7 +12,7 @@ from PIL import Image
 
 
 #添付ファイル処理用の関数
-async def attachments_proc(ctx, filepath, media_type):
+async def attachments_proc(itrc, filepath, media_type):
     # URL先のファイルが指定したmimetypeであるかどうかを判定する関数
     async def ismimetype(url, mimetypes_list):
         try:
@@ -36,19 +36,20 @@ async def attachments_proc(ctx, filepath, media_type):
     
     url = ""
     #返信をしていた場合
-    if ctx.message.reference is not None:
-        message_reference = await ctx.channel.fetch_message(ctx.message.reference.message_id)
+    # if itrc.message.reference is not None:
+    if False:
+        message_reference = await itrc.channel.fetch_message(itrc.message.reference.message_id)
         #返信元のメッセージにファイルが添付されていた場合
         if len(message_reference.attachments) > 0:
             url = message_reference.attachments[0].url
         #返信元のメッセージにファイルが添付されていなかった場合
         else:
-            await ctx.reply("返信元のメッセージにファイルが添付されていません", mention_author=False)
+            await itrc.channel.reply("返信元のメッセージにファイルが添付されていません", mention_author=False)
             return False
     #返信をしていなかった場合
     else:
         #直近10件のメッセージの添付ファイル・URLの取得を試みる
-        async for message in ctx.history(limit=10):
+        async for message in itrc.channel.history(limit=10):
             mo = re.search(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", message.content)
             #メッセージに添付ファイルが存在する場合
             if len(message.attachments) > 0:
@@ -57,11 +58,11 @@ async def attachments_proc(ctx, filepath, media_type):
             elif mo:
                 url = mo.group()
                 # URL判定
-            if await ismimetype(url, mimetypes[media_type]):
+            if await ismimetype(url, mimetypes[media_type.lower()]):
                 break
         #どちらも存在しない場合
         else:
-            await ctx.reply("ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください", mention_author=False)
+            await itrc.channel.reply("ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください", mention_author=False)
             return False
 
     # ダウンロード
@@ -120,9 +121,9 @@ def searchex(lis, target_text, strength):
 
 
 # 言葉狩り
-async def kotobagari_proc(ctx):
+async def kotobagari_proc(message):
     # メッセージ送信者がBotだった場合は無視する
-    if ctx.author.bot:
+    if message.author.bot:
         return
 
     channel_id_list = []
@@ -131,38 +132,38 @@ async def kotobagari_proc(ctx):
             for row in reader:
                 channel_id_list = row
     
-    if not str(ctx.channel.id) in channel_id_list:
-        for _ in searchex(["あつい", "暑"], str(ctx.content), 1):
-            await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png")
+    if str(message.channel.id) in channel_id_list:
+        for _ in searchex(["あつい", "暑"], str(message.content), 1):
+            await message.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1003853181777887282/temp_output.png")
 
-        for _ in searchex(["おくり"], str(ctx.content), 3):
+        for _ in searchex(["おくり", "ぉくり"], str(message.content), 3):
             text = ""
-            if random.randrange(0, 100) == 0:
+            if random.randrange(0, 100) < 3:
                 text = "君は優しくおくりへと誘う"
             else:
                 text = "おくりさんどれだけ性欲あるの"
-            await ctx.channel.send(text)
+            await message.channel.send(text)
 
-        for _ in searchex(["ごきぶり"], str(ctx.content), 1):
-            await ctx.channel.send("フラッシュさん見て見て\nゴキブリ～")
+        for _ in searchex(["ごきぶり"], str(message.content), 1):
+            await message.channel.send("フラッシュさん見て見て\nゴキブリ～")
 
-        for _ in searchex(["さかな", "魚"], str(ctx.content), 1):
-            await ctx.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif")
+        for _ in searchex(["さかな", "魚"], str(message.content), 1):
+            await message.channel.send("https://cdn.discordapp.com/attachments/1002875196522381325/1010464389352148992/lycoris4bd_Trim_AdobeExpress.gif")
 
-        for _ in searchex(["ひる", "昼"], str(ctx.content), 1):
+        for _ in searchex(["ひる", "昼"], str(message.content), 1):
             images = [
                 "https://cdn.discordapp.com/attachments/1002875196522381325/1003699645458944011/FTakxQUaIAAoyn3CUnetnoise_scaleLevel2x4.000000.png",
                 "https://cdn.discordapp.com/attachments/1002875196522381325/1008245051077443664/FZmJ06EUIAAcZNi.jpg"
             ]
             image_pickup = random.choice(images)
-            await ctx.channel.send(image_pickup)
+            await message.channel.send(image_pickup)
 
-        if searchex(["ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(ctx.content), 0):
-            await ctx.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
+        if searchex(["ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(message.content), 0):
+            await message.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
 
 
 
-async def send_uma(channel, author, custom_weights):
+async def send_uma(itrc, custom_weights):
     class Chara:
         #アイコン画像の数字に一致
         id = 0
@@ -187,11 +188,11 @@ async def send_uma(channel, author, custom_weights):
     chara_list = []
     usage_list = []
     path_uma_gacha = "data/assets/uma_gacha"
-    path_output = f"data/temp/uma_gacha_{channel.id}.png"
+    path_output = f"data/temp/uma_gacha_{itrc.channel_id}.png"
     fontsize = 32
     region_particle = img_utils.Region([img_utils.Rect(0, 30, 32, 236), img_utils.Rect(32, 30, 207, 56), img_utils.Rect(207, 30, 240, 236)])
 
-    async with channel.typing():
+    async with itrc.channel.typing():
         # CSVファイルからキャラ情報を読み込み
         with open("data/csv/uma_chara_info.csv") as f:
             reader = csv.reader(f)
@@ -212,7 +213,7 @@ async def send_uma(channel, author, custom_weights):
         chara_id_list = []
         exchange_point = 0
         for i, u in enumerate(usage_list):
-            if author.id == u.user:
+            if itrc.user.id == u.user:
                 chara_id_list = u.chara_id_list
                 exchange_point = u.exchange_point
                 usage_list.pop(i)
@@ -377,7 +378,7 @@ async def send_uma(channel, author, custom_weights):
             async def callback(self, interaction):
                 response = interaction.response
                 await response.edit_message(view=None)
-                await send_uma(interaction.channel, interaction.user, custom_weights)
+                await send_uma(interaction, custom_weights)
 
         button = Button_Uma(style=discord.ButtonStyle.success, label="もう一回引く")
 
@@ -386,14 +387,14 @@ async def send_uma(channel, author, custom_weights):
         view.add_item(button)
 
         # メッセージを送信
-        await channel.send(content=f"<@{author.id}>", file=gacha_result_image, view=view)
+        await itrc.response.send_message(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
 
     # 生成した画像を削除
     if os.path.isfile(path_output):
         os.remove(path_output)
 
     # ガチャ使用情報を更新
-    usage = Gacha_Usage(author.id, chara_id_list, exchange_point)
+    usage = Gacha_Usage(itrc.user.id, chara_id_list, exchange_point)
     usage_list.append(usage)
 
     with open("data/csv/uma_gacha_usage.csv", "w") as f:
