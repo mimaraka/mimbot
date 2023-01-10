@@ -44,7 +44,7 @@
 - ### /kotobagari [True/False]  
     コマンドを送信したチャンネルの言葉狩り機能の有効・無効を切り替えます。
     
-- ### ^kuwagata [文字列(オプション)]  
+- ### /kuwagata [文字列(オプション)]  
     フラッシュさん見て見て  
     クワガタ～
 
@@ -63,6 +63,9 @@
 
 - ### /removebg [True/False(オプション)]  
     rembgまたはremove.bg APIを用いて画像の背景を透過します。
+    
+- ### /sd_txt2img  
+    Stable Diffusionを用いて文章から画像を生成します。
    
 - ### /tomb [文字列(オプション)] 
     墓を作ります。
