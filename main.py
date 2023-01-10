@@ -553,61 +553,61 @@ async def sd_txt2img(itrc:Interaction):
 
         async def on_submit(self, interaction):
             global g_models
-            #try:
-            prompt = str(self.input_prompt)
-            neg_prompt = str(self.input_negative_prompt)
-            n_step = int(str(self.input_sampling_steps))
-            width = int(str(self.input_width))
-            height = int(str(self.input_height))
-
-            # インタラクションを無視
             try:
-                await interaction.response.send_message("")
-            except discord.errors.HTTPException:
-                pass
+                prompt = str(self.input_prompt)
+                neg_prompt = str(self.input_negative_prompt)
+                n_step = int(str(self.input_sampling_steps))
+                width = int(str(self.input_width))
+                height = int(str(self.input_height))
 
-            if (not g_models) or (not button_continue.ckpt_ in g_models.keys()):
+                # インタラクションを無視
+                try:
+                    await interaction.response.send_message("")
+                except discord.errors.HTTPException:
+                    pass
+
+                if (not g_models) or (not button_continue.ckpt_ in g_models.keys()):
+                    message = await itrc.channel.send(
+                        embed=discord.Embed(
+                            title="処理中です...",
+                            description="モデルの読み込み中..."
+                        )
+                    )
+                    g_models = stable_diffusion.scripts.txt2img.load_model(button_continue.ckpt_, models=g_models)
+                    await message.delete()
+
                 message = await itrc.channel.send(
                     embed=discord.Embed(
                         title="処理中です...",
-                        description="モデルの読み込み中..."
+                        description="生成中..."
                     )
                 )
-                g_models = stable_diffusion.scripts.txt2img.load_model(button_continue.ckpt_, models=g_models)
+
+                stable_diffusion.scripts.txt2img.txt2img_proc(
+                    prompt=prompt,
+                    negative_prompt=neg_prompt,
+                    filename=filename_output,
+                    outdir=output_dir,
+                    ckpt=button_continue.ckpt_,
+                    sampling_method=button_continue.sampling_method_,
+                    sampling_steps=n_step,
+                    width=width,
+                    height=height,
+                    models=g_models
+                )
                 await message.delete()
 
-            message = await itrc.channel.send(
-                embed=discord.Embed(
-                    title="処理中です...",
-                    description="生成中..."
+                if os.path.isfile(result_path):
+                    await itrc.channel.send(content=f"<@{itrc.user.id}>", file=discord.File(result_path))
+                    os.remove(result_path)
+
+            except:
+                await interaction.channel.send(
+                    embed=discord.Embed(
+                        title="エラー",
+                        description="無効な入力値です。"
+                    )
                 )
-            )
-
-            stable_diffusion.scripts.txt2img.txt2img_proc(
-                prompt=prompt,
-                negative_prompt=neg_prompt,
-                filename=filename_output,
-                outdir=output_dir,
-                ckpt=button_continue.ckpt_,
-                sampling_method=button_continue.sampling_method_,
-                sampling_steps=n_step,
-                width=width,
-                height=height,
-                models=g_models
-            )
-            await message.delete()
-
-            if os.path.isfile(result_path):
-                await itrc.channel.send(content=f"<@{itrc.user.id}>", file=discord.File(result_path))
-                os.remove(result_path)
-
-            # except:
-            #     await interaction.channel.send(
-            #         embed=discord.Embed(
-            #             title="エラー",
-            #             description="無効な入力値です。"
-            #         )
-            #     )
 
     modal_settings = Modal_SdSettings()
 

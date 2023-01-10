@@ -130,7 +130,8 @@ async def kotobagari_proc(message):
     with open("data/csv/kotobagari.csv") as f:
             reader = csv.reader(f)
             for row in reader:
-                channel_id_list = row
+                if row:
+                    channel_id_list.append(row[0])
     
     if str(message.channel.id) in channel_id_list:
         for _ in searchex(["あつい", "暑"], str(message.content), 1):
@@ -163,7 +164,7 @@ async def kotobagari_proc(message):
 
 
 
-async def send_uma(itrc, custom_weights):
+async def send_uma(itrc, custom_weights, response_interactions=True):
     class Chara:
         #アイコン画像の数字に一致
         id = 0
@@ -377,7 +378,7 @@ async def send_uma(itrc, custom_weights):
             async def callback(self, interaction):
                 response = interaction.response
                 await response.edit_message(view=None)
-                await send_uma(interaction, custom_weights)
+                await send_uma(interaction, custom_weights, False)
 
         button = Button_Uma(style=discord.ButtonStyle.success, label="もう一回引く")
 
@@ -386,7 +387,10 @@ async def send_uma(itrc, custom_weights):
         view.add_item(button)
 
         # メッセージを送信
-        await itrc.response.send_message(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
+        if response_interactions:
+            await itrc.response.send_message(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
+        else:
+            await itrc.channel.send(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
 
     # 生成した画像を削除
     if os.path.isfile(path_output):
