@@ -20,7 +20,9 @@ from ldm.models.diffusion.plms import PLMSSampler
 from ldm.models.diffusion.dpm_solver import DPMSolverSampler
 
 CONFIG_PATH = "stable_diffusion/configs/stable-diffusion/v1-inference.yaml"
-AV3_CKPT_PATH = "stable_diffusion/models/Anything-V3.0.ckpt"
+AV3_CKPT = "Anything-V3.0.ckpt"
+MODEL_DIR = "stable_diffusion/models"
+OUT_DIR = "stable_diffusion/outputs/txt2img-samples"
 
 
 def chunk(it, size):
@@ -40,9 +42,11 @@ def numpy_to_pil(images):
     return pil_images
 
 
-def load_model_from_config(config = OmegaConf.load(CONFIG_PATH), ckpt = AV3_CKPT_PATH, verbose=False):
-    print(f"Loading model from {ckpt}")
-    pl_sd = torch.load(ckpt, map_location="cpu")
+def load_model(ckpt, config = OmegaConf.load(CONFIG_PATH), models=None, verbose=False):
+    ckpt_path = f"{MODEL_DIR}/{ckpt}"
+    assert os.path.isfile(ckpt_path)
+    print(f"Loading model from {ckpt_path}")
+    pl_sd = torch.load(ckpt_path, map_location="cpu")
     if "global_step" in pl_sd:
         print(f"Global Step: {pl_sd['global_step']}")
     sd = pl_sd["state_dict"]
@@ -57,12 +61,30 @@ def load_model_from_config(config = OmegaConf.load(CONFIG_PATH), ckpt = AV3_CKPT
 
     model.cuda()
     model.eval()
-    return model
+
+    models_ = models if models else {}
+
+    if not ckpt in models_.keys():
+        models_[ckpt] = model
+
+    return models_
 
 
-def anything_txt2img(prompt, negative_prompt = "", outdir = "stable_diffusion/outputs/txt2img-samples", filename = "", n_samples = 1, n_iter = 1, sampling_steps = 24, seed = -1, width = 512, height = 512, model = None):
-    dpm_solver = False
-    plms = False
+def txt2img_proc(
+    prompt,
+    negative_prompt="",
+    outdir=OUT_DIR,
+    filename="",
+    ckpt="",
+    sampling_method="ddim",
+    n_samples=1,
+    n_iter=1,
+    sampling_steps=24,
+    seed=-1,
+    width=512,
+    height=512,
+    models=None
+):
     fixed_code = False
     precision = "autocast" # "full" or "autocast"
     C = 4
@@ -75,21 +97,22 @@ def anything_txt2img(prompt, negative_prompt = "", outdir = "stable_diffusion/ou
     else:
         sd = seed
 
+    ckpt_path = f"{MODEL_DIR}/{ckpt}"
+    assert os.path.isfile(ckpt_path)
     seed_everything(sd)
 
     config = OmegaConf.load(CONFIG_PATH)
-    md = load_model_from_config(config, AV3_CKPT_PATH) if not model else model
+    mds = load_model(ckpt, config=config, models=models) if not models else models
 
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-    md = md.to(torch.float16).to(device)
+    md = mds[ckpt].to(torch.float16).to(device)
 
-    if dpm_solver:
+    if sampling_method == "dpm_solver":
         sampler = DPMSolverSampler(md)
-    elif plms:
+    elif sampling_method == "plms":
         sampler = PLMSSampler(md)
     else:
         sampler = DDIMSampler(md)
-    
 
     os.makedirs(outdir, exist_ok=True)
 
