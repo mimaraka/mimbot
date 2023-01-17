@@ -366,21 +366,6 @@ async def raika(itrc:Interaction, n: int=1):
 
 
 
-# raika_stricker
-@tree.command(name="raika_stricker")
-async def raika_stricker(itrc:Interaction, n:int=1):
-    """
-    raika stricker
-    """
-    raika_img_link = "https://media.discordapp.net/attachments/1002875196522381325/1062003240213942363/raika_stricker.png?width=571&height=571"
-    for _ in range(n):
-        try:
-            await itrc.response.send_message(raika_img_link)
-        except:
-            await itrc.channel.send(raika_img_link)
-
-
-
 # 背景を透過
 @tree.command()
 async def removebg(itrc:Interaction, use_removebgapi:bool=False):
