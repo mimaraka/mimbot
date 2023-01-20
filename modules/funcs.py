@@ -12,7 +12,7 @@ from PIL import Image
 
 
 #添付ファイル処理用の関数
-async def attachments_proc(itrc, filepath, media_type):
+async def attachments_proc(channel, filepath, media_type):
     # URL先のファイルが指定したmimetypeであるかどうかを判定する関数
     async def ismimetype(url, mimetypes_list):
         try:
@@ -38,18 +38,19 @@ async def attachments_proc(itrc, filepath, media_type):
     #返信をしていた場合
     # if itrc.message.reference is not None:
     if False:
-        message_reference = await itrc.channel.fetch_message(itrc.message.reference.message_id)
+        message_reference = await channel.fetch_message(itrc.message.reference.message_id)
         #返信元のメッセージにファイルが添付されていた場合
         if len(message_reference.attachments) > 0:
             url = message_reference.attachments[0].url
         #返信元のメッセージにファイルが添付されていなかった場合
         else:
-            await itrc.channel.reply("返信元のメッセージにファイルが添付されていません", mention_author=False)
+            embed = discord.Embed(title="エラー", description="返信元のメッセージにファイルが添付されていません")
+            await channel.send(embed=embed)
             return False
     #返信をしていなかった場合
     else:
         #直近10件のメッセージの添付ファイル・URLの取得を試みる
-        async for message in itrc.channel.history(limit=10):
+        async for message in channel.history(limit=10):
             mo = re.search(r"https?://[\w/:%#\$&\?\(\)~\.=\+\-]+", message.content)
             #メッセージに添付ファイルが存在する場合
             if len(message.attachments) > 0:
@@ -62,7 +63,8 @@ async def attachments_proc(itrc, filepath, media_type):
                 break
         #どちらも存在しない場合
         else:
-            await itrc.channel.reply("ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください", mention_author=False)
+            embed = discord.Embed(title="エラー", description="ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください。")
+            await channel.send(embed=embed)
             return False
 
     # ダウンロード
@@ -164,7 +166,7 @@ async def kotobagari_proc(message):
 
 
 
-async def send_uma(itrc, custom_weights, response_interactions=True):
+async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
     class Chara:
         #アイコン画像の数字に一致
         id = 0
@@ -185,15 +187,20 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
             self.user = user
             self.chara_id_list = ids
             self.exchange_point = exchange_point
+
+    if not itrc and not ctx:
+        return
+    channel = itrc.channel if itrc else ctx.channel
+    user = itrc.user if itrc else ctx.author
     
     chara_list = []
     usage_list = []
     path_uma_gacha = "data/assets/uma_gacha"
-    path_output = f"data/temp/uma_gacha_{itrc.channel_id}.png"
+    path_output = f"data/temp/uma_gacha_{channel.id}.png"
     fontsize = 32
     region_particle = img_utils.Region([img_utils.Rect(0, 30, 32, 236), img_utils.Rect(32, 30, 207, 56), img_utils.Rect(207, 30, 240, 236)])
 
-    async with itrc.channel.typing():
+    async with channel.typing():
         # CSVファイルからキャラ情報を読み込み
         with open("data/csv/uma_chara_info.csv") as f:
             reader = csv.reader(f)
@@ -213,7 +220,7 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
         chara_id_list = []
         exchange_point = 0
         for i, u in enumerate(usage_list):
-            if itrc.user.id == u.user:
+            if user.id == u.user:
                 chara_id_list = u.chara_id_list
                 exchange_point = u.exchange_point
                 usage_list.pop(i)
@@ -317,7 +324,7 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
 
                 # テキスト(女神像)
                 text_megami_x = 54 if chara_result.rarity == 3 else 76
-                m_img.drawtext(f"x{num_megami}", (x + text_megami_x + adjust_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
+                m_img.drawtext(f"x{num_megami}", (x + text_megami_x + adjust_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath="data/fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
 
             # 未獲得の場合
             else:
@@ -334,7 +341,7 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
                 bonus_x = 68 + adjust_x
 
             # テキスト(ピース)
-            m_img.drawtext(f"x{num_piece}", (x + text_piece_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
+            m_img.drawtext(f"x{num_piece}", (x + text_piece_x, y + 311), fill=(124, 63, 18), anchor="lt", fontpath="data/fonts/rodin_wanpaku_eb.otf", fontsize=fontsize, stroke_width=2, stroke_fill="white")
 
             # ピース
             piece = Image.open(f"{path_uma_gacha}/textures/piece_icon/{chara_result.id}.png")
@@ -365,9 +372,9 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
             m_img.composit(stars, (x + 46, y + 243))
 
         # 育成ウマ娘交換ポイント書き込み
-        m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor="rt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
+        m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor="rt", fontpath="data/fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
         exchange_point += 10
-        m_img.drawtext(str(exchange_point), (860, 1611), fill=(255, 145, 21), anchor="rt", fontpath=".fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
+        m_img.drawtext(str(exchange_point), (860, 1611), fill=(255, 145, 21), anchor="rt", fontpath="data/fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)
 
         # リザルト画面の保存&読み込み
         m_img.write(path_output)
@@ -378,7 +385,7 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
             async def callback(self, interaction):
                 response = interaction.response
                 await response.edit_message(view=None)
-                await send_uma(interaction, custom_weights, False)
+                await send_uma(interaction, ctx, custom_weights, False)
 
         button = Button_Uma(style=discord.ButtonStyle.success, label="もう一回引く")
 
@@ -387,17 +394,20 @@ async def send_uma(itrc, custom_weights, response_interactions=True):
         view.add_item(button)
 
         # メッセージを送信
-        if response_interactions:
-            await itrc.response.send_message(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
+        if response_interactions and itrc:
+            await itrc.response.send_message(content=f"<@{user.id}>", file=gacha_result_image, view=view)
         else:
-            await itrc.channel.send(content=f"<@{itrc.user.id}>", file=gacha_result_image, view=view)
+            await channel.send(content=f"<@{user.id}>", file=gacha_result_image, view=view)
 
     # 生成した画像を削除
-    if os.path.isfile(path_output):
-        os.remove(path_output)
+    try:
+        if os.path.isfile(path_output):
+            os.remove(path_output)
+    except PermissionError:
+        pass
 
     # ガチャ使用情報を更新
-    usage = Gacha_Usage(itrc.user.id, chara_id_list, exchange_point)
+    usage = Gacha_Usage(user.id, chara_id_list, exchange_point)
     usage_list.append(usage)
 
     with open("data/csv/uma_gacha_usage.csv", "w") as f:

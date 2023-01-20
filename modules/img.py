@@ -138,7 +138,7 @@ class Mimbot_Image:
 
 
     # テキストを追加
-    def drawtext(self, text, pos, fill="white", anchor="mm", fontpath=".fonts/meiryo.ttf" , fontsize=24, direction="rtl", stroke_width=0, stroke_fill="black"):
+    def drawtext(self, text, pos, fill="white", anchor="mm", fontpath="data/fonts/meiryo.ttf" , fontsize=24, direction="rtl", stroke_width=0, stroke_fill="black"):
         font = ImageFont.truetype(fontpath, fontsize)
 
         draw = ImageDraw.Draw(self.image)

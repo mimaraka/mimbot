@@ -1,14 +1,11 @@
 import os, sys
 sys.path.append('stable_diffusion')
-import cv2
 import torch
 import numpy as np
 import random
 from omegaconf import OmegaConf
 from PIL import Image
 from tqdm import tqdm, trange
-from imwatermark import WatermarkEncoder
-from itertools import islice
 from einops import rearrange
 from pytorch_lightning import seed_everything
 from torch import autocast
@@ -23,23 +20,6 @@ CONFIG_PATH = "stable_diffusion/configs/stable-diffusion/v1-inference.yaml"
 AV3_CKPT = "Anything-V3.0.ckpt"
 MODEL_DIR = "stable_diffusion/models"
 OUT_DIR = "stable_diffusion/outputs/txt2img-samples"
-
-
-def chunk(it, size):
-    it = iter(it)
-    return iter(lambda: tuple(islice(it, size)), ())
-
-
-def numpy_to_pil(images):
-    """
-    Convert a numpy image or a batch of images to a PIL image.
-    """
-    if images.ndim == 3:
-        images = images[None, ...]
-    images = (images * 255).round().astype("uint8")
-    pil_images = [Image.fromarray(image) for image in images]
-
-    return pil_images
 
 
 def load_model(ckpt, config = OmegaConf.load(CONFIG_PATH), models=None, verbose=False):
