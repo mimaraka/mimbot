@@ -162,7 +162,7 @@ async def command_tree_ping(itrc:Interaction):
     """
     Ping値を取得します。
     """
-    await bot_commands.ping(itrc, None, client=bot)
+    await bot_commands.ping(itrc, None, bot)
 
 
 
@@ -323,7 +323,7 @@ async def command_bot_ping(ctx):
     """
     Ping値を取得します。
     """
-    await bot_commands.okuri(None, ctx, client=bot)
+    await bot_commands.ping(None, ctx, bot)
 
 
 
