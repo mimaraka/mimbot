@@ -4,17 +4,12 @@ import discord
 import discord.app_commands
 from discord import Interaction
 from discord.ext import commands
-import random
 import asyncio
 import datetime
+import openai
 import os
-
-
-
-intents = discord.Intents.all()
-intents.message_content = True
-bot = commands.Bot(command_prefix="&", intents=intents, case_insensitive=True)
-tree = bot.tree
+import random
+import re
 
 
 
@@ -22,6 +17,15 @@ tree = bot.tree
 ####    !!!Tokens!!!
 ##########################################################################
 DISCORD_BOT_TOKEN = os.getenv("DISCORD_BOT_TOKEN")
+OPENAI_APIKEY = os.getenv("OPENAI_APIKEY")
+
+
+
+intents = discord.Intents.all()
+intents.message_content = True
+bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
+tree = bot.tree
+openai.api_key = OPENAI_APIKEY
 
 
 
@@ -39,7 +43,7 @@ async def change_presence():
         "Blender",
         "CakeWalk",
         "CLIP STUDIO PAINT PRO",
-        "Cookie Clicker"
+        "Cookie Clicker",
         "Cooking Simulator",
         "Crab Game",
         "FallGuys",
@@ -87,15 +91,43 @@ async def on_ready():
 #メッセージ受信時に動作する処理
 @bot.event
 async def on_message(message):
+    global session_api
     await bot.process_commands(message)
     # 言葉狩り機能
     await modules.funcs.kotobagari_proc(message)
+
+    # ChatGPT
+    if bot.user.mentioned_in(message) or message.channel.type == discord.ChannelType.private:
+        if message.author.bot:
+            return
+        async with message.channel.typing():
+            response = openai.Completion.create(
+                model="text-davinci-003",
+                prompt=re.sub(r"<@\d+>", "", message.content),
+                temperature=0.9,
+                max_tokens=2048,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0.6,
+            )
+            await message.channel.send(response["choices"][0]["text"])
+
 
 
 
 ##########################################################################
 ####    Tree Command
 ##########################################################################
+
+# BPM
+@tree.command(name="bpm")
+async def command_tree_bpm(itrc:Interaction):
+    """
+    音声のBPM値を算出します。
+    (調べたい音声の近くに)/bpm
+    """
+    await bot_commands.bpm(itrc, None)
+
 
 # 画像に各種エフェクトをかける
 @tree.command(name="effect")
@@ -231,6 +263,16 @@ async def command_tree_uma(itrc: Interaction, weights_1: int=100, weights_2: int
 ##########################################################################
 ####    Bot Command
 ##########################################################################
+
+# BPM
+@bot.command(name="bpm")
+async def command_bot_bpm(ctx):
+    """
+    音声のBPM値を算出します。
+    (調べたい音声の近くに)/bpm
+    """
+    await bot_commands.bpm(None, ctx)
+
 
 # 画像に各種エフェクトをかける
 @bot.command(name="effect")

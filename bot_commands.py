@@ -1,3 +1,4 @@
+from commands.bpm import proc as bpm
 from commands.effect import proc as effect
 from commands.kotobagari import proc as kotobagari
 from commands.kuwagata import proc as kuwagata

@@ -1,14 +1,11 @@
-import modules.img_utils as img_utils
-import modules.img
 import aiohttp
 import csv
 import discord
 import jaconv
-import os
 import random
 import re
 import requests
-from PIL import Image
+
 
 
 # 添付ファイル処理用の関数
@@ -47,7 +44,10 @@ async def attachments_proc(itrc, ctx, filepath, media_type):
             url = message_reference.attachments[0].url
         #返信元のメッセージにファイルが添付されていなかった場合
         else:
-            embed = discord.Embed(title="エラー", description="返信元のメッセージにファイルが添付されていません")
+            embed = discord.Embed(
+                title="エラー",
+                description="返信元のメッセージにファイルが添付されていません"
+            )
             await channel.send(embed=embed)
             return False
     # 返信をしていなかった場合
@@ -66,15 +66,18 @@ async def attachments_proc(itrc, ctx, filepath, media_type):
                 break
         #どちらも存在しない場合
         else:
-            embed = discord.Embed(title="エラー", description="ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください。")
+            embed = discord.Embed(
+                title="エラー",
+                description="ファイルやurlが添付されたメッセージの近くに書くか、返信をしてください。"
+            )
             await channel.send(embed=embed)
             return False
 
     # ダウンロード
     response = requests.get(url)
-    image = response.content
+    content = response.content
     with open(filepath, "wb") as f:
-        f.write(image)
+        f.write(content)
         return True
 
 
