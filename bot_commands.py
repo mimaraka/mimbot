@@ -1,5 +1,7 @@
 from commands.bpm import proc as bpm
 from commands.effect import proc as effect
+from commands.kani import proc as kani
+from commands.kani_img import proc as kani_img
 from commands.kotobagari import proc as kotobagari
 from commands.kuwagata import proc as kuwagata
 from commands.kuwagata_img import proc as kuwagata_img

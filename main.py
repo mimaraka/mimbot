@@ -55,8 +55,6 @@ async def change_presence():
         "Splatoon 3",
         "Terraria",
         "Unrailed!",
-        "Visual Studio 2022",
-        "Visual Studio Code",
         "VocalShifter",
         "超将棋"
     ]
@@ -69,6 +67,7 @@ async def change_presence():
         activity=discord.Game(random.choice(games)),
         status=random.choice(status)
     )
+    # 20分後に再度ステータス等を変更
     await asyncio.sleep(1200)
     await change_presence()
 
@@ -91,7 +90,6 @@ async def on_ready():
 #メッセージ受信時に動作する処理
 @bot.event
 async def on_message(message):
-    global session_api
     await bot.process_commands(message)
     # 言葉狩り機能
     await modules.funcs.kotobagari_proc(message)
@@ -110,7 +108,10 @@ async def on_message(message):
                 frequency_penalty=0,
                 presence_penalty=0.6,
             )
-            await message.channel.send(response["choices"][0]["text"])
+            result = response["choices"][0]["text"]
+            if len(result) > 2048:
+                result = result[:2047]
+            await message.channel.send(result)
 
 
 
@@ -137,6 +138,26 @@ async def command_tree_effect(itrc:Interaction, prompt:str=""):
     (適用したい画像の近くに)/effect [モード] [モードごとの引数] ...
     """
     await bot_commands.effect(itrc, None, prompt=prompt)
+
+
+# カニ
+@tree.command(name="kani")
+async def command_tree_kani(itrc:Interaction, kani_text:str="カニ"):
+    """
+    見て見てフラッシュさん カニファル子だよ～
+    /kani ['カニ'にあたる部分の文字列]
+    """
+    await bot_commands.kani(itrc, None, kani_text=kani_text)
+
+
+# カニ(画像)
+@tree.command(name="kani_img")
+async def command_tree_kani_img(itrc, kani_text:str="カニ"):
+    """
+    見て見てフラッシュさん カニファル子だよ～の画像版
+    /kani_img ['カニ'にあたる部分の文字列]
+    """
+    await bot_commands.kani_img(itrc, None, kani_text=kani_text)
 
 
 # 言葉狩り機能のオンオフ
@@ -269,7 +290,7 @@ async def command_tree_uma(itrc: Interaction, weights_1: int=79, weights_2: int=
 async def command_bot_bpm(ctx):
     """
     音声のBPM値を算出します。
-    (調べたい音声の近くに)/bpm
+    (調べたい音声の近くに)&bpm
     """
     await bot_commands.bpm(None, ctx)
 
@@ -279,12 +300,38 @@ async def command_bot_bpm(ctx):
 async def command_bot_effect(ctx, *args):
     """
     画像にエフェクトを適用します。
-    (適用したい画像の近くに)/effect [モード] [モードごとの引数] ...
+    (適用したい画像の近くに)&effect [モード] [モードごとの引数] ...
     """
     try:
         await bot_commands.effect(None, ctx, prompt=args[0])
     except:
         await bot_commands.effect(None, ctx)
+
+
+# カニ
+@bot.command(name="kani")
+async def command_bot_kani(ctx, *args):
+    """
+    見て見てフラッシュさん カニファル子だよ～
+    &kani ['カニ'にあたる部分の文字列]
+    """
+    if args:
+        await bot_commands.kani(None, ctx, kani_text=args[0])
+    else:
+        await bot_commands.kani(None, ctx)
+
+
+# カニ(画像)
+@bot.command(name="kani_img")
+async def command_bot_kani_img(ctx, *args):
+    """
+    見て見てフラッシュさん カニファル子だよ～の画像版
+    &kani_img ['カニ'にあたる部分の文字列]
+    """
+    if args:
+        await bot_commands.kani_img(None, ctx, kani_text=args[0])
+    else:
+        await bot_commands.kani_img(None, ctx)
 
 
 # 言葉狩り機能のオンオフ
@@ -309,7 +356,7 @@ async def command_bot_kotobagari(ctx, *args):
 async def command_bot_kuwagata(ctx, *args):
     """
     フラッシュさん見て見て クワガタ～
-    /kuwagata ['クワガタ'にあたる部分の文字列]
+    &kuwagata ['クワガタ'にあたる部分の文字列]
     """
     if args:
         await bot_commands.kuwagata(None, ctx, kuwagata_text=args[0])
@@ -323,7 +370,7 @@ async def command_bot_kuwagata(ctx, *args):
 async def command_bot_kuwagata_img(ctx, *args):
     """
     フラッシュさん見て見て クワガタ～の画像版
-    /kuwagata_img ['クワガタ'にあたる部分の文字列]
+    &kuwagata_img ['クワガタ'にあたる部分の文字列]
     """
     if args:
         await bot_commands.kuwagata_img(None, ctx, kuwagata_text=args[0])
@@ -337,7 +384,7 @@ async def command_bot_kuwagata_img(ctx, *args):
 async def command_bot_okuri(ctx, *args):
     """
     おくりさんどれだけ性欲あるの
-    /okuri ['性欲'にあたる部分の文字列] ['ある'にあたる部分の文字列] ['の'にあたる部分の文字列]
+    &okuri ['性欲'にあたる部分の文字列] ['ある'にあたる部分の文字列] ['の'にあたる部分の文字列]
     """
     if args:
         if len(args) > 2:
@@ -374,7 +421,7 @@ async def command_bot_ping(ctx):
 async def command_bot_raika(ctx, *args):
     """
     raikaさんのおもしろツイートガチャ
-    /raika [実行したい回数]
+    &raika [実行したい回数]
     """
     try:
         n = int(args[0])
@@ -389,7 +436,7 @@ async def command_bot_raika(ctx, *args):
 async def command_bot_removebg(ctx, *args):
     """
     画像の背景を透過します。
-    (透過したい画像の近くに)/removebg [透過方法(オプション)]
+    (透過したい画像の近くに)&removebg [透過方法(オプション)]
     ・透過方法：use_removebgapiをTrueにするとremovebg APIを使って透過します。
     　　　　　　removebg APIの使用制限に達した場合はrembgが使用されます。
     """
@@ -407,7 +454,7 @@ async def command_bot_removebg(ctx, *args):
 async def command_bot_tomb(ctx, *args):
     """
     墓を作ります。
-    /tomb [文字列]
+    &tomb [文字列]
     """
     if args:
         await bot_commands.tomb(None, ctx, content=args[0])
@@ -431,7 +478,7 @@ async def command_bot_txt2img(ctx):
 async def command_bot_uma(ctx, *args):
     """
     ウマ娘のガチャ(10連)をシミュレートします。
-    /uma [☆1の確率の重み(オプション)] [☆2の確率の重み(オプション)] [☆3の確率の重み(オプション)] 
+    &uma [☆1の確率の重み(オプション)] [☆2の確率の重み(オプション)] [☆3の確率の重み(オプション)] 
     """
     try:
         if len(args) > 2:
