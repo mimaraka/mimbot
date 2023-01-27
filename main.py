@@ -245,7 +245,7 @@ async def command_tree_txt2img(itrc:Interaction):
 
 # ウマ娘ガチャシミュレーター
 @tree.command(name="uma")
-async def command_tree_uma(itrc: Interaction, weights_1: int=100, weights_2: int=100, weights_3: int=100):
+async def command_tree_uma(itrc: Interaction, weights_1: int=79, weights_2: int=18, weights_3: int=3):
     """
     ウマ娘のガチャ(10連)をシミュレートします。
     /uma [☆1の確率の重み(オプション)] [☆2の確率の重み(オプション)] [☆3の確率の重み(オプション)] 

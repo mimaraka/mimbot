@@ -8,8 +8,33 @@ from PIL import Image
 
 
 
+# キャラのクラス
+class Chara:
+    #アイコン画像の数字に一致
+    id = 0
+    rarity = 0
+    is_pickup = 0
+
+    def __init__(self, id, rarity, is_pickup):
+        self.id = id
+        self.rarity = rarity
+        self.is_pickup = is_pickup
+
+# ガチャ使用情報のクラス
+class Gacha_Usage:
+    user = ""
+    chara_id_list = []
+    exchange_point = 0
+
+    def __init__(self, user, ids, exchange_point):
+        self.user = user
+        self.chara_id_list = ids
+        self.exchange_point = exchange_point
+
+
+
 # ウマ娘ガチャシミュレーター
-async def proc(itrc, ctx, weights_1=100, weights_2=100, weights_3=100):
+async def proc(itrc, ctx, weights_1, weights_2, weights_3):
     try:
         custom_weights = [int(weights_1), int(weights_2), int(weights_3)]
         weights_sum = sum(custom_weights)
@@ -21,27 +46,6 @@ async def proc(itrc, ctx, weights_1=100, weights_2=100, weights_3=100):
 
 
 async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
-    class Chara:
-        #アイコン画像の数字に一致
-        id = 0
-        rarity = 0
-        is_pickup = 0
-
-        def __init__(self, id, rarity, is_pickup):
-            self.id = id
-            self.rarity = rarity
-            self.is_pickup = is_pickup
-
-    class Gacha_Usage:
-        user = ""
-        chara_id_list = []
-        exchange_point = 0
-
-        def __init__(self, user, ids, exchange_point):
-            self.user = user
-            self.chara_id_list = ids
-            self.exchange_point = exchange_point
-
     if not itrc and not ctx:
         return
     channel = itrc.channel if itrc else ctx.channel
@@ -52,7 +56,13 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
     path_uma_gacha = "data/assets/uma_gacha"
     path_output = f"data/temp/uma_gacha_{channel.id}.png"
     fontsize = 32
-    region_particle = img_utils.Region([img_utils.Rect(0, 30, 32, 236), img_utils.Rect(32, 30, 207, 56), img_utils.Rect(207, 30, 240, 236)])
+    region_particle = img_utils.Region(
+        [
+            img_utils.Rect(0, 30, 32, 236),
+            img_utils.Rect(32, 30, 207, 56),
+            img_utils.Rect(207, 30, 240, 236)
+        ]
+    )
 
     async with channel.typing():
         # CSVファイルからキャラ情報を読み込み
