@@ -152,7 +152,7 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
                 x = 258 + 324 * (i % 5 - 3)
                 y = 519 + 724 * (i // 5)
 
-            m_img.composit(chara_icon, (x, y))
+            m_img.composite(chara_icon, (x, y))
 
             piece_x = 0
             bonus_x = 0
@@ -179,7 +179,7 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
                 # 女神像
                 megami = Image.open(f"{path_uma_gacha}/textures/icon_megami.png")
                 megami_x = 4 if chara_result.rarity == 3 else 26
-                m_img.composit(megami, (x + megami_x + adjust_x, y + 300))
+                m_img.composite(megami, (x + megami_x + adjust_x, y + 300))
 
                 # ピース・おまけの位置
                 piece_x = 130 + adjust_x
@@ -195,7 +195,7 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
                 chara_id_list.append(chara_result.id)
                 # NEW!
                 label_new = Image.open(f"{path_uma_gacha}/textures/label_new.png")
-                m_img.composit(label_new, (x - 22, y))
+                m_img.composite(label_new, (x - 22, y))
 
                 adjust_x = 11 if chara_result.rarity == 1 else 0
 
@@ -209,16 +209,16 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
 
             # ピース
             piece = Image.open(f"{path_uma_gacha}/textures/piece_icon/{chara_result.id}.png")
-            m_img.composit(piece, (x + piece_x, y + 300))
+            m_img.composite(piece, (x + piece_x, y + 300))
 
             # おまけ
             label_bonus = Image.open(f"{path_uma_gacha}/textures/label_bonus.png")
-            m_img.composit(label_bonus, (x + bonus_x, y + 286))
+            m_img.composite(label_bonus, (x + bonus_x, y + 286))
 
             # レア度が3の場合枠を描画
             if chara_result.rarity == 3:
                 frame = Image.open(f"{path_uma_gacha}/textures/frame.png")
-                m_img.composit(frame, (x - 8, y))
+                m_img.composite(frame, (x - 8, y))
 
             # パーティクルを描画
             if chara_result.rarity > 1:
@@ -229,11 +229,11 @@ async def send_uma(itrc, ctx, custom_weights, response_interactions=True):
                     scale = random.uniform(1, 3)
                     particle_resize = particle.resize((int(particle.width // scale) ,int(particle.height // scale)))
                     particle_pos = region_particle.randompos()
-                    m_img.composit(particle_resize, (x - (particle_resize.width // 2) + particle_pos[0], y - (particle_resize.height // 2) + particle_pos[1]))
+                    m_img.composite(particle_resize, (x - (particle_resize.width // 2) + particle_pos[0], y - (particle_resize.height // 2) + particle_pos[1]))
 
             # 星マークを貼り付け
             stars = Image.open(f"{path_uma_gacha}/textures/stars_{chara_result.rarity}.png")
-            m_img.composit(stars, (x + 46, y + 243))
+            m_img.composite(stars, (x + 46, y + 243))
 
         # 育成ウマ娘交換ポイント書き込み
         m_img.drawtext(str(exchange_point), (732, 1611), fill=(124, 63, 18), anchor="rt", fontpath="data/fonts/rodin_wanpaku_eb.otf", fontsize=fontsize)

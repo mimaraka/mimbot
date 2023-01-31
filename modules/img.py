@@ -14,32 +14,28 @@ class Mimbot_Image:
         self.image.save(path)
     
     # ブラー
-    def blur(self, values):
-        if not values:
-            return True
-        elif values[0] == "box":
-            radius = values[1] if len(values) > 2 else 10
+    def blur(self, type="box", value_1=None, value_2=None):
+        if type == "box":
+            radius = value_1 if value_1 else 10
             self.image = self.image.filter(ImageFilter.BoxBlur(radius=radius))
-        elif values[0] == "gaussian":
-            radius = values[1] if len(values) > 2 else 10
+        elif type == "gaussian":
+            radius = value_1 if value_1 else 10
             self.image = self.image.filter(ImageFilter.GaussianBlur(radius=radius))
-        elif values[0] == "median":
-            size = values[1] if len(values) > 2 else 10
+        elif type == "median":
+            size = value_1 if value_1 else 10
             self.image = self.image.filter(ImageFilter.MedianFilter(size=size))
-        elif values[0] in ["maximum", "max"]:
-            size = values[1] if len(values) > 2 else 10
+        elif type in ["maximum", "max"]:
+            size = value_1 if value_1 else 10
             self.image = self.image.filter(ImageFilter.MaxFilter(size=size))
-        elif values[0] in ["minimum", "min"]:
-            size = values[1] if len(values) > 2 else 10
+        elif type in ["minimum", "min"]:
+            size = value_1 if value_1 else 10
             self.image = self.image.filter(ImageFilter.MinFilter(size=size))
-        elif values[0] == "radius":
-            return False
-        elif values[0] == "rank":
-            size = values[1] if len(values) > 2 else 10
-            rank = values[2] if len(values) > 3 else 5
+        elif type == "radius":
+            return
+        elif type == "rank":
+            size = value_1 if value_1 else 10
+            rank = value_2 if value_2 else 5
             self.image = self.image.filter(ImageFilter.RankFilter(size=size, rank=rank))
-
-        return False
 
 
     # 画像を変形
@@ -146,7 +142,7 @@ class Mimbot_Image:
 
 
     # コンポジット(透過画像対応)
-    def composit(self, img, position):
+    def composite(self, img, position):
         bg_clear = Image.new("RGBA", self.image.size, (255, 255, 255, 0))
         bg_clear.paste(img, position)
         self.image = Image.alpha_composite(self.image, bg_clear)

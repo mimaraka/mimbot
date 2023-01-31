@@ -21,9 +21,10 @@ OPENAI_APIKEY = os.getenv("OPENAI_APIKEY")
 
 
 
+COMMAND_PREFIX = "&"
 intents = discord.Intents.all()
 intents.message_content = True
-bot = commands.Bot(command_prefix="^", intents=intents, case_insensitive=True)
+bot = commands.Bot(command_prefix=COMMAND_PREFIX, intents=intents, case_insensitive=True)
 tree = bot.tree
 openai.api_key = OPENAI_APIKEY
 
@@ -96,7 +97,7 @@ async def on_message(message):
 
     # ChatGPT
     if bot.user.mentioned_in(message) or message.channel.type == discord.ChannelType.private:
-        if message.author.bot:
+        if message.author.bot or message.content[0] == COMMAND_PREFIX:
             return
         async with message.channel.typing():
             response = openai.Completion.create(
@@ -255,12 +256,12 @@ async def command_tree_tomb(itrc:Interaction, content:str=""):
 
 
 #Text to image(Stable Diffusion)
-@tree.command(name="txt2img")
-async def command_tree_txt2img(itrc:Interaction):
-    """
-    Stable Diffusionを用いてテキストから画像を生成します。
-    """
-    await bot_commands.txt2img(itrc, None)
+# @tree.command(name="txt2img")
+# async def command_tree_txt2img(itrc:Interaction):
+#     """
+#     Stable Diffusionを用いてテキストから画像を生成します。
+#     """
+#     await bot_commands.txt2img(itrc, None)
 
 
 
@@ -464,12 +465,12 @@ async def command_bot_tomb(ctx, *args):
 
 
 #Text to image(Stable Diffusion)
-@bot.command(name="txt2img")
-async def command_bot_txt2img(ctx):
-    """
-    Stable Diffusionを用いてテキストから画像を生成します。
-    """
-    await bot_commands.txt2img(None, ctx)
+# @bot.command(name="txt2img")
+# async def command_bot_txt2img(ctx):
+#     """
+#     Stable Diffusionを用いてテキストから画像を生成します。
+#     """
+#     await bot_commands.txt2img(None, ctx)
 
 
 

@@ -6,35 +6,64 @@ import os
 
 
 # 画像に各種エフェクトをかける
-async def proc(itrc, ctx, prompt=""):
+async def proc(itrc, ctx):
     if not itrc and not ctx:
         return
     channel = itrc.channel if itrc else ctx.channel
 
-    args = prompt.split(",")
+    # コンボボックス
+    class My_Select(discord.ui.Select):
+        async def callback(self, interaction):
+            # インタラクションを無視
+            try:
+                await interaction.response.send_message("")
+            except discord.errors.HTTPException:
+                pass
 
-    if args:
-        fxname = args[0]
-    else:
-        embed = discord.Embed(
-            title = "effect command",
-            description = 
-                "**・blur (ブラーの種類)**\n画像にブラーを適用します。\n\n"\
-                "**・distortion / distort / dist (変形の種類)：**\n画像を様々な形に変形します。\n\n"\
-                "**・mosaic (サイズ)：**\n画像にモザイクを適用します。\n\n"\
-                "**・negative / nega：**\n画像のネガポジを反転します。\n\n"\
-                "**・pixelize (サイズ)：**\n画像をドット絵風の見た目にします。"
-        )
-        if itrc:
-            await itrc.response.send_message(embed=embed)
-        elif ctx:
-            await ctx.send(embed=embed)
+    # "続ける"のボタン
+    class Button_Continue(discord.ui.Button):
+        async def callback(self, interaction):
+            return
+
+    if not await modules.funcs.attachments_proc(itrc, ctx, filename_input, "image"):
         return
 
-    if len(args) > 1:
-        values = args[1:]
-    else:
-        values = []
+    # 画像読み込み
+    m_img = modules.img.Mimbot_Image()
+    m_img.load(filename_input)
+    
+    list_effects = My_Select(min_values=1, max_values=1)
+
+    list_effects.add_option(label="ブラー", value="blur")
+    list_effects.add_option(label="エンボス", value="emboss")
+    list_effects.add_option(label="ディストーション", value="distortion")
+    list_effects.add_option(label="モザイク", value="mosaic")
+    list_effects.add_option(label="ネガポジ反転", value="negative")
+    list_effects.add_option(label="ドット化", value="pixelize")
+
+    embed = discord.Embed(
+        title = "effect command",
+        description = 
+            "**・ブラー**\n画像にブラーを適用します。\n\n"\
+            "**・エンボス**\n画像にエンボスを適用します。\n\n"\
+            "**・ディストーション**\n画像を様々な形に変形します。\n\n"\
+            "**・モザイク**\n画像にモザイクを適用します。\n\n"\
+            "**・ネガポジ反転**\n画像のネガポジを反転します。\n\n"\
+            "**・ドット化**\n画像をドット絵風の見た目にします。"
+    )
+
+    button_continue = Button_Continue(label="続ける")
+
+    view = discord.ui.View()
+    view.timeout = None
+    view.add_item(list_effects)
+    view.add_item(button_continue)
+
+    await channel.send(
+        embed=embed,
+        view=view
+    )
+
 
     async with channel.typing():
         filename_input = f"data/temp/temp_input_{channel.id}.png"
@@ -47,23 +76,42 @@ async def proc(itrc, ctx, prompt=""):
         m_img.load(filename_input)
 
         # ブラー
-        if fxname.lower() in ["blur", "bl"]:
-            if m_img.blur(values):
-                embed = discord.Embed(
-                    title = "blur effect",
-                    description = 
-                        "**・box (サイズ)：**\nボックスブラー\n\n"\
-                        "**・gaussian (サイズ)：**\nガウシアンブラー\n\n"\
-                        "**・median (サイズ)：**\nメディアンブラー\n\n"\
-                        "**・maximun / max (サイズ)：**\n最大値フィルタ\n\n"\
-                        "**・minimum / min (サイズ)：**\n最小値フィルタ\n\n"\
-                        "**・rank (サイズ) (ランク)：**\nランクフィルタ"
-                )
-                await channel.send(embed = embed)
-                return
+        async def blur():
+            class Button_Continue_Blur(discord.ui.Button):
+                async def callback(self, interaction):
+                    
+                    return
+            
+            list_blur = My_Select(min_values=1, max_values=1)
+            list_blur.add_option(label="ボックス", value="box")
+            list_blur.add_option(label="ガウシアン", value="gaussian")
+            list_blur.add_option(label="メディアン", value="median")
+            list_blur.add_option(label="最大値", value="max")
+            list_blur.add_option(label="最小値", value="min")
+            list_blur.add_option(label="ランク", value="rank")
+
+            button_continue_blur = Button_Continue_Blur(label="続ける")
+            
+            embed = discord.Embed(
+                title = "ブラー",
+                description = 
+                    "**・ボックス (サイズ)**\nボックスブラー\n\n"\
+                    "**・ガウシアン (サイズ)**\nガウシアンブラー\n\n"\
+                    "**・メディアン (サイズ)**\nメディアンブラー\n\n"\
+                    "**・最大値 (サイズ)**\n最大値フィルタ\n\n"\
+                    "**・最小値 (サイズ)**\n最小値フィルタ\n\n"\
+                    "**・ランク (サイズ) (ランク)**\nランクフィルタ"
+            )
+
+            view = discord.ui.View()
+            view.timeout = None
+            view.add_item(list_blur)
+            view.add_item(button_continue_blur)
+
+            await channel.send(embed=embed, view=view)
 
         # 変形
-        elif fxname.lower() in ["dist", "distort", "distortion"]:
+        async def distortion():
             if m_img.distort(values):
                 embed = discord.Embed(
                     title = "distort effect",
@@ -75,20 +123,20 @@ async def proc(itrc, ctx, prompt=""):
                 return
 
         # エンボス
-        elif fxname.lower() == "emboss":
+        async def emboss():
             m_img.emboss()
 
         # モザイク
-        elif fxname.lower() == "mosaic":
+        async def mosaic():
             size = int(values[0]) if values else 20
             m_img.mosaic(size)
 
         # ネガポジ反転
-        elif fxname in ["negative", "nega"]:
+        async def negative():
             m_img.negative()
 
         # Pixelize
-        elif fxname.lower() == "pixelize":
+        async def pixelize():
             size = int(values[0]) if values else 20
             m_img.pixelize(size)
 
