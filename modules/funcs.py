@@ -5,6 +5,8 @@ import jaconv
 import random
 import re
 import requests
+import openai
+import time
 
 
 
@@ -169,3 +171,61 @@ async def kotobagari_proc(message):
 
         if searchex(["ばか", "ごみ", "あほ", "はげ", "ざこ", "くそ", "かす"], str(message.content), 0):
             await message.channel.send("ゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミハゲカスゴミゴミバカカスアホバカバカアホゴミノミザコゴミハゲカスゴミクズ")
+
+
+
+g_conversations = []
+"""
+conversation = {
+    channel : [channel object],
+    time : [最後にチャットが行われたときのunix時間],
+    messages : [messageのリスト]
+}
+"""
+
+# ChatGPT APIによるチャット処理
+async def process_chat(message):
+    global g_conversations
+    conversation = {}
+
+    async with message.channel.typing():
+        for i, conv in enumerate(g_conversations):
+            if conv["channel"] == message.channel:
+                conversation = g_conversations.pop(i)
+                break
+
+        # 過去の会話が存在しないか、最後の回答から12時間以上経過した場合
+        if not conversation.get("messages") or time.time() - conversation["time"] > 43200:
+            # 会話をリセット
+            conversation["messages"] = []
+
+        # チャンネル、時間を記録
+        conversation["channel"] = message.channel
+        conversation["time"] = time.time()
+        
+        # ユーザーの入力を追加
+        conversation["messages"].append(
+            {
+                "role": "user",
+                "content": re.sub(r"<@\d+>", "", message.content)
+            }
+        )
+
+        # 回答を生成
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=conversation["messages"]
+        )
+
+        result = response["choices"][0]["message"]["content"]
+
+        # 送信
+        if len(result) > 2048:
+            result = result[:2047]
+        await message.channel.send(result)
+
+    # ChatGPTの回答を追加
+    conversation["messages"].append(response["choices"][0]["message"])
+
+    # 会話を記録
+    g_conversations.append(conversation)

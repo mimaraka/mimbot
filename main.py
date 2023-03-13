@@ -99,20 +99,7 @@ async def on_message(message):
     if bot.user.mentioned_in(message) or message.channel.type == discord.ChannelType.private:
         if message.author.bot or message.content[0] == COMMAND_PREFIX:
             return
-        async with message.channel.typing():
-            response = openai.Completion.create(
-                model="text-davinci-003",
-                prompt=re.sub(r"<@\d+>", "", message.content),
-                temperature=0.9,
-                max_tokens=2048,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0.6,
-            )
-            result = response["choices"][0]["text"]
-            if len(result) > 2048:
-                result = result[:2047]
-            await message.channel.send(result)
+        await modules.funcs.process_chat(message)
 
 
 
