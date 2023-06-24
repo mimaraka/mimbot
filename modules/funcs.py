@@ -140,8 +140,8 @@ async def kotobagari_proc(message):
     with open("data/csv/kotobagari.csv") as f:
             reader = csv.reader(f)
             for row in reader:
-                if row:
-                    channel_id_list.append(row[0])
+                if len(row) > 0:
+                    channel_id_list = row
     
     if str(message.channel.id) in channel_id_list:
         for _ in searchex(["あつい", "暑"], str(message.content), 1):
