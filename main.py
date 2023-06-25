@@ -103,7 +103,6 @@ async def on_message(message):
 
 
 
-
 ##########################################################################
 ####    Tree Command
 ##########################################################################
@@ -228,6 +227,17 @@ async def command_tree_removebg(itrc:Interaction, use_removebgapi:bool=False):
     　　　　　　removebg APIの使用制限に達した場合はrembgが使用されます。
     """
     await bot_commands.removebg(itrc, None, use_removebgapi=use_removebgapi)
+
+
+
+# 任意のメッセージを送信
+@tree.command(name="send")
+async def command_tree_send(itrc:Interaction, content:str, channel_id:str=None):
+    """
+    任意のメッセージを送信します。
+    &send [メッセージ] [チャンネルID]
+    """
+    await bot_commands.send(itrc, None, bot, content, channel_id)
 
 
 
@@ -434,6 +444,20 @@ async def command_bot_removebg(ctx, *args):
             await bot_commands.removebg(None, ctx, True)
     except:
         await bot_commands.removebg(None, ctx)
+
+
+
+# 任意のメッセージを送信
+@bot.command(name="send")
+async def command_bot_send(ctx, *args):
+    """
+    任意のメッセージを送信します。
+    &send [メッセージ] [チャンネルID]
+    """
+    if len(args) > 1:
+        await bot_commands.send(None, ctx, bot, args[0], args[1])
+    elif args:
+        await bot_commands.send(None, ctx, bot, args[0])
 
 
 

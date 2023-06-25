@@ -9,6 +9,7 @@ from commands.okuri import proc as okuri
 from commands.ping import proc as ping
 from commands.raika import proc as raika
 from commands.removebg import proc as removebg
+from commands.send import proc as send
 from commands.tomb import proc as tomb
 # from commands.txt2img import proc as txt2img
 from commands.uma import proc as uma
