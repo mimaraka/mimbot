@@ -110,7 +110,7 @@ async def proc(itrc, ctx):
             else:
                 message = await channel.send(embed=embed_creating)
 
-            stable_diffusion.scripts.txt2img.txt2img_proc(
+            seed = stable_diffusion.scripts.txt2img.txt2img_proc(
                 prompt=prompt,
                 negative_prompt=neg_prompt,
                 filename=filename_output,
@@ -125,9 +125,32 @@ async def proc(itrc, ctx):
             await message.delete()
 
             if os.path.isfile(result_path):
+                if button_continue.sampling_method_ == "ddim":
+                    method_name = "DDIM"
+                elif button_continue.sampling_method_ == "dpm_solver":
+                    method_name = "DPM Solver"
+                else:
+                    method_name = "PLMS"
+
                 embed = discord.Embed(title=f"Stable Diffusion txt2img")
-                embed.add_field(name="Prompt", value=f"`{prompt}`", inline=False)
-                embed.add_field(name="Negative Prompt", value=f"`{neg_prompt}`", inline=False)
+                embed.add_field(
+                    name="Prompt",
+                    value=f"`{prompt}`",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Negative Prompt",
+                    value=f"`{neg_prompt}`" if neg_prompt else "(None)",
+                    inline=False
+                )
+                embed.add_field(
+                    name="Model",
+                    value=f"{button_continue.ckpt_[:-5]}",
+                    inline=False
+                )
+                embed.add_field(name="Sampling Method", value=f"{method_name}")
+                embed.add_field(name="Sampling Steps", value=f"{n_step}")
+                embed.add_field(name="Seed", value=f"{seed}")
                 if itrc:
                     await itrc.followup.send(file=discord.File(result_path), embed=embed)
                 elif ctx:

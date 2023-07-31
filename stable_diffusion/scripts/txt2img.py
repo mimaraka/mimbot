@@ -146,3 +146,4 @@ def txt2img_proc(
                             base_count += 1
 
     print("Succeed to generate.")
+    return sd
